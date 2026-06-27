@@ -3,313 +3,906 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Engineering • Klausur-Trainer • Für die 1</title>
+    <title>Web Engineering • Klausur-Trainer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        body { font-family: 'Inter', system_ui, sans-serif; background: #0a0c10; }
-        .font-display { font-family: 'Space Grotesk', 'Inter', sans-serif; font-weight: 600; }
-        .glass { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(12px); }
-        .nav-tab { transition: all 0.1s ease; }
-        .nav-tab.active { background: #052e16; color: #4ade80; border-bottom: 3px solid #10b981; }
-        .section-header { font-size: 1.65rem; line-height: 1.1; font-weight: 700; letter-spacing: -0.025em; }
-        .priority-high { background:#450a0a; color:#f87171; border-color:#991b1b; }
-        .priority-medium { background:#451a03; color:#fbbf24; border-color:#854d0e; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
+        
+        :root {
+            --primary: #10b981;
+        }
+        
+        body {
+            font-family: 'Inter', system_ui, sans-serif;
+        }
+        
+        .font-display {
+            font-family: 'Space Grotesk', 'Inter', system_ui, sans-serif;
+            font-weight: 600;
+        }
+
+        .tab-active {
+            background-color: #10b981;
+            color: white;
+            border-radius: 9999px;
+            box-shadow: 0 10px 15px -3px rgb(16 185 129 / 0.2);
+        }
+
+        .section {
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+        }
+
+        .topic-card, .question-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .topic-card:hover, .question-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.05), 0 8px 10px -6px rgb(0 0 0 / 0.05);
+        }
+
+        .nav-tab {
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .nav-tab.active {
+            color: #10b981;
+            font-weight: 600;
+        }
+        
+        .nav-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(to right, #10b981, #34d399);
+            border-radius: 3px;
+        }
+
+        .stat-card {
+            transition: transform 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .explanation-text {
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .klausur-badge {
+            font-size: 0.75rem;
+            padding-left: 0.65rem;
+            padding-right: 0.65rem;
+            padding-top: 0.1rem;
+            padding-bottom: 0.1rem;
+            font-weight: 600;
+        }
+
+        .toast {
+            animation: slideUp 0.3s ease forwards;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .day-card {
+            transition: all 0.2s ease;
+        }
+
+        .day-card.completed {
+            background-color: #f0fdf4;
+            border-color: #86efac;
+        }
+
+        .modal {
+            animation: modalPop 0.2s ease forwards;
+        }
+
+        .prose-custom p {
+            margin-bottom: 0.75rem;
+        }
+
+        .mini-code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 0.8rem;
+        }
+
+        .learning-plan {
+            scrollbar-width: thin;
+            scrollbar-color: #86efac #f1f5f9;
+        }
     </style>
 </head>
-<body class="text-zinc-200">
-    <nav class="border-b border-zinc-800 bg-zinc-950/95 backdrop-blur-xl sticky top-0 z-50">
-        <div class="max-w-screen-xl mx-auto px-4">
-            <div class="flex items-center justify-between h-14">
-                <div class="flex items-center gap-x-3">
-                    <div class="w-8 h-8 bg-emerald-600 rounded-2xl flex items-center justify-center">
-                        <i class="fa-solid fa-graduation-cap text-white"></i>
+<body class="bg-slate-50 text-slate-900">
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-x-4">
+                    <!-- Logo -->
+                    <div class="flex items-center gap-x-3">
+                        <div class="w-11 h-11 bg-emerald-600 rounded-2xl flex items-center justify-center shadow-inner">
+                            <i class="fa-solid fa-graduation-cap text-white text-3xl"></i>
+                        </div>
+                        <div>
+                            <h1 class="font-display text-3xl tracking-tighter font-semibold">Web Engineering</h1>
+                            <p class="text-emerald-600 text-sm font-medium -mt-1">Klausur-Trainer</p>
+                        </div>
                     </div>
-                    <span class="font-display text-2xl font-semibold tracking-tighter">Web Engineering</span>
+                    <div class="hidden md:block px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-2xl text-xs font-semibold tracking-wider">
+                        FH SALZBURG • ITS
+                    </div>
                 </div>
-                <div class="px-3 py-1 bg-emerald-950 text-emerald-400 rounded-2xl text-xs font-semibold flex items-center gap-x-1.5 border border-emerald-900">
-                    <i class="fa-solid fa-check-double"></i>
-                    <span>Ziel: 1</span>
+                
+                <div class="flex items-center gap-x-2">
+                    <div class="hidden sm:flex items-center gap-x-2 text-xs text-slate-500 bg-white px-3 py-1.5 rounded-2xl border border-slate-200">
+                        <i class="fa-solid fa-wifi text-emerald-500"></i>
+                        <span class="font-medium">Offline-fähig</span>
+                    </div>
+                    
+                    <!-- Dark mode toggle (optional but nice) -->
+                    <button onclick="toggleDarkMode()" 
+                            class="w-9 h-9 flex items-center justify-center text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-2xl transition-colors"
+                            title="Dark Mode umschalten">
+                        <i class="fa-solid fa-moon text-lg" id="dark-icon"></i>
+                    </button>
                 </div>
             </div>
+        </div>
+    </header>
+
+    <!-- Tab Navigation -->
+    <nav class="max-w-7xl mx-auto px-6 pt-6">
+        <div class="flex flex-wrap gap-2 bg-white p-1.5 rounded-3xl shadow-sm border border-slate-200">
+            <button onclick="switchTab('dashboard')" id="tab-btn-dashboard"
+                    class="nav-tab flex-1 sm:flex-none px-5 py-2.5 text-sm font-semibold flex items-center justify-center gap-x-2 rounded-2xl hover:bg-slate-50 active:bg-slate-100">
+                <i class="fa-solid fa-home w-4"></i>
+                <span>Dashboard</span>
+            </button>
+            <button onclick="switchTab('theorie')" id="tab-btn-theorie"
+                    class="nav-tab flex-1 sm:flex-none px-5 py-2.5 text-sm font-semibold flex items-center justify-center gap-x-2 rounded-2xl hover:bg-slate-50 active:bg-slate-100">
+                <i class="fa-solid fa-book w-4"></i>
+                <span>Folien &amp; Theorie</span>
+            </button>
+            <button onclick="switchTab('training')" id="tab-btn-training"
+                    class="nav-tab flex-1 sm:flex-none px-5 py-2.5 text-sm font-semibold flex items-center justify-center gap-x-2 rounded-2xl hover:bg-slate-50 active:bg-slate-100">
+                <i class="fa-solid fa-graduation-cap w-4"></i>
+                <span>Prüfungstraining</span>
+            </button>
+            <button onclick="switchTab('grok')" id="tab-btn-grok"
+                    class="nav-tab flex-1 sm:flex-none px-5 py-2.5 text-sm font-semibold flex items-center justify-center gap-x-2 rounded-2xl hover:bg-slate-50 active:bg-slate-100">
+                <i class="fa-solid fa-robot w-4"></i>
+                <span>Mit Grok üben</span>
+            </button>
+            <button onclick="switchTab('cheatsheet')" id="tab-btn-cheatsheet"
+                    class="nav-tab flex-1 sm:flex-none px-5 py-2.5 text-sm font-semibold flex items-center justify-center gap-x-2 rounded-2xl hover:bg-slate-50 active:bg-slate-100">
+                <i class="fa-solid fa-sticky-note w-4"></i>
+                <span>Cheat Sheet</span>
+            </button>
         </div>
     </nav>
 
-    <div class="max-w-screen-xl mx-auto px-4 pt-3 md:hidden">
-        <div class="flex overflow-x-auto gap-1 pb-2 text-xs">
-            <button onclick="switchTab(0)" class="nav-tab px-3 py-1.5 rounded-2xl bg-zinc-900 border border-zinc-700 flex-shrink-0" id="nav-0">Dashboard</button>
-            <button onclick="switchTab(1)" class="nav-tab px-3 py-1.5 rounded-2xl bg-zinc-900 border border-zinc-700 flex-shrink-0" id="nav-1">Folien &amp; Theorie</button>
-            <button onclick="switchTab(2)" class="nav-tab px-3 py-1.5 rounded-2xl bg-zinc-900 border border-zinc-700 flex-shrink-0" id="nav-2">Prüfungstraining</button>
-            <button onclick="switchTab(3)" class="nav-tab px-3 py-1.5 rounded-2xl bg-zinc-900 border border-zinc-700 flex-shrink-0" id="nav-3">Mit Grok üben</button>
-            <button onclick="switchTab(4)" class="nav-tab px-3 py-1.5 rounded-2xl bg-zinc-900 border border-zinc-700 flex-shrink-0" id="nav-4">Cheat Sheet</button>
-        </div>
-    </div>
-
-    <div class="max-w-screen-xl mx-auto px-4 md:px-6 pt-4 pb-16">
+    <main class="max-w-7xl mx-auto px-6 py-8">
         
-        <!-- DASHBOARD -->
-        <div id="tab-0" class="tab-content">
-            <h1 class="font-display text-4xl tracking-tighter font-bold mb-1">Bereit für die 1?</h1>
-            <p class="text-zinc-400 mb-6">Alles an einem Ort – klar strukturiert nach den Folien.</p>
-
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-                <div class="glass p-4 rounded-2xl"><div class="text-xs text-emerald-400">FOLIEN</div><div class="text-3xl font-semibold">72%</div></div>
-                <div class="glass p-4 rounded-2xl"><div class="text-xs text-emerald-400">FRAGEN</div><div class="text-3xl font-semibold">10/16</div></div>
-                <div class="glass p-4 rounded-2xl"><div class="text-xs text-emerald-400">FLASHCARDS</div><div class="text-3xl font-semibold">34/52</div></div>
-                <div class="glass p-4 rounded-2xl"><div class="text-xs text-emerald-400">QUIZ BEST</div><div class="text-3xl font-semibold">26/30</div></div>
+        <!-- ==================== DASHBOARD ==================== -->
+        <section id="dashboard" class="section active">
+            <div class="mb-8">
+                <h2 class="font-display text-4xl tracking-tighter font-semibold">Willkommen zurück!</h2>
+                <p class="text-slate-600 mt-1">Dein persönlicher Lernstand für die Web-Engineering-Klausur</p>
             </div>
 
-            <!-- Export / Import -->
-            <div class="glass p-6 rounded-3xl mb-6 border border-emerald-900/30">
-                <div class="font-semibold mb-2 flex items-center gap-x-2">
-                    <i class="fa-solid fa-download text-emerald-400"></i>
-                    <span>Fortschritt exportieren / importieren</span>
+            <!-- Prüfungsinfo Banner -->
+            <div class="mb-8 bg-white border border-emerald-200 rounded-3xl p-5 flex flex-col md:flex-row md:items-center gap-4">
+                <div class="flex items-center gap-x-3">
+                    <div class="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center flex-shrink-0">
+                        <i class="fa-solid fa-info-circle text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="font-semibold text-emerald-700">Prüfungsorganisation</div>
+                        <div class="text-sm text-emerald-600">50% Vorlesungsklausur • 50% Labor • Beide Teile müssen bestanden werden • 75% Anwesenheitspflicht</div>
+                    </div>
                 </div>
-                <p class="text-xs text-zinc-400 mb-4">Damit du deinen Fortschritt und Notizen zwischen Handy und Laptop übertragen kannst.</p>
+                <div class="md:ml-auto text-xs px-4 py-2 bg-emerald-50 text-emerald-700 rounded-2xl font-medium whitespace-nowrap">
+                    Notenschlüssel: 1 (100-88) • 2 (87-76) • 3 (75-63) • 4 (62-51) • 5 (50-0)
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 
-                <div class="flex flex-col sm:flex-row gap-3">
-                    <button onclick="exportProgress()" 
-                            class="flex-1 px-5 py-3 bg-emerald-600 hover:bg-emerald-500 rounded-2xl font-semibold flex items-center justify-center gap-x-2">
-                        <i class="fa-solid fa-download"></i>
-                        <span>Fortschritt exportieren</span>
-                    </button>
-                    
-                    <label class="flex-1 cursor-pointer">
-                        <input type="file" id="import-file" accept=".json" class="hidden" onchange="importProgress(event)">
-                        <div class="px-5 py-3 bg-zinc-800 hover:bg-zinc-700 border border-zinc-600 rounded-2xl font-semibold flex items-center justify-center gap-x-2">
-                            <i class="fa-solid fa-upload"></i>
-                            <span>Fortschritt importieren</span>
+                <!-- 7-Tage Lernplan -->
+                <div class="lg:col-span-7 bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="px-6 pt-6 pb-4 flex items-center justify-between border-b border-slate-100">
+                        <div>
+                            <h3 class="font-semibold text-xl flex items-center gap-x-2">
+                                <i class="fa-solid fa-calendar-check text-emerald-600"></i>
+                                <span>7-Tage Lernplan</span>
+                            </h3>
+                            <p class="text-sm text-slate-500 mt-0.5">Strukturierter Weg durch alle relevanten Themen</p>
                         </div>
-                    </label>
+                        <div id="plan-progress-text" 
+                             class="text-right text-sm font-semibold px-3.5 py-1 bg-emerald-50 text-emerald-700 rounded-2xl">
+                            0/7 Tage
+                        </div>
+                    </div>
+                    
+                    <div class="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 learning-plan max-h-[420px] overflow-auto pr-2">
+                        <!-- Populated by JS -->
+                    </div>
+                    
+                    <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs">
+                        <div class="text-slate-500">Täglich 45–90 Min. empfohlen</div>
+                        <button onclick="resetPlan()" 
+                                class="text-emerald-600 hover:text-emerald-700 font-medium flex items-center gap-x-1 text-xs">
+                            <i class="fa-solid fa-undo text-xs"></i> 
+                            <span>Plan zurücksetzen</span>
+                        </button>
+                    </div>
                 </div>
-                <div class="text-[10px] text-zinc-500 mt-3">Die Datei enthält alle deine Notizen und Fortschritte.</div>
+
+                <!-- Stats Overview -->
+                <div class="lg:col-span-5 grid grid-cols-2 gap-4">
+                    <div class="stat-card bg-white rounded-3xl border border-slate-200 p-5 flex flex-col">
+                        <div class="flex items-center justify-between">
+                            <div class="text-emerald-600">
+                                <i class="fa-solid fa-book text-2xl"></i>
+                            </div>
+                            <div id="stat-topics" class="text-4xl font-semibold tabular-nums text-emerald-700">0</div>
+                        </div>
+                        <div class="mt-auto">
+                            <div class="font-semibold">Themen mit Notizen</div>
+                            <div class="text-xs text-slate-500">von 9 Kern-Themen</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card bg-white rounded-3xl border border-slate-200 p-5 flex flex-col">
+                        <div class="flex items-center justify-between">
+                            <div class="text-emerald-600">
+                                <i class="fa-solid fa-check-double text-2xl"></i>
+                            </div>
+                            <div id="stat-questions" class="text-4xl font-semibold tabular-nums text-emerald-700">0</div>
+                        </div>
+                        <div class="mt-auto">
+                            <div class="font-semibold">Fragen geübt</div>
+                            <div class="text-xs text-slate-500">von <span id="stat-questions-total">12</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card bg-white rounded-3xl border border-slate-200 p-5 flex flex-col col-span-2">
+                        <div class="flex justify-between items-baseline mb-3">
+                            <div>
+                                <div class="font-semibold">Gesamtfortschritt</div>
+                                <div class="text-xs text-slate-500">Theorie + Training</div>
+                            </div>
+                            <div id="stat-overall" class="text-3xl font-semibold text-emerald-700 tabular-nums">0%</div>
+                        </div>
+                        <div class="h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                            <div id="stat-progress-bar" 
+                                 class="h-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full transition-all"
+                                 style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Export / Import -->
+                <div class="lg:col-span-12 bg-white rounded-3xl border border-slate-200 p-6">
+                    <div class="flex flex-col md:flex-row md:items-center gap-4">
+                        <div class="flex-1">
+                            <h4 class="font-semibold flex items-center gap-x-2">
+                                <i class="fa-solid fa-download text-emerald-600"></i>
+                                <span>Fortschritt sichern &amp; wiederherstellen</span>
+                            </h4>
+                            <p class="text-sm text-slate-500 mt-1">Alle Notizen, geübten Fragen und dein 7-Tage-Plan werden lokal gespeichert.</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <button onclick="exportProgress()" 
+                                    class="px-5 py-2.5 bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 font-semibold text-sm rounded-2xl flex items-center gap-x-2 transition-colors">
+                                <i class="fa-solid fa-download"></i>
+                                <span>Exportieren</span>
+                            </button>
+                            <label class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm rounded-2xl flex items-center gap-x-2 cursor-pointer transition-colors">
+                                <i class="fa-solid fa-upload"></i>
+                                <span>Importieren</span>
+                                <input type="file" id="import-file" accept=".json" class="hidden" onchange="importProgress(event)">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== FOLIEN & THEORIE ==================== -->
+        <section id="theorie" class="section">
+            <div class="flex items-end justify-between mb-6">
+                <div>
+                    <h2 class="font-display text-3xl tracking-tighter font-semibold">Wichtige Themen aus den Vorlesungsfolien</h2>
+                    <p class="text-slate-600">Kurze Erklärungen + deine persönlichen Notizen (automatisch gespeichert)</p>
+                </div>
+                <div class="text-xs px-3 py-1 bg-white border border-slate-200 rounded-2xl text-slate-500 font-medium hidden md:block">
+                    Alle Notizen bleiben in deinem Browser
+                </div>
             </div>
 
-            <!-- Lernplan -->
-            <div class="glass p-6 rounded-3xl mb-6 border border-emerald-900/30">
-                <div class="font-semibold mb-4 flex items-center gap-x-2"><i class="fa-solid fa-calendar-alt text-emerald-500"></i> Dein 7-Tage-Lernplan</div>
-                <div class="grid grid-cols-2 md:grid-cols-7 gap-2 text-xs">
-                    <div class="bg-zinc-900 p-3 rounded-2xl"><div class="font-semibold text-emerald-400">Tag 1-2</div>Modernes JS + Async</div>
-                    <div class="bg-zinc-900 p-3 rounded-2xl"><div class="font-semibold text-emerald-400">Tag 3</div>REST + Express + SOA</div>
-                    <div class="bg-zinc-900 p-3 rounded-2xl"><div class="font-semibold text-emerald-400">Tag 4</div>Auth &amp; Cookies</div>
-                    <div class="bg-zinc-900 p-3 rounded-2xl"><div class="font-semibold text-emerald-400">Tag 5</div>Security + HTTPS</div>
-                    <div class="bg-zinc-900 p-3 rounded-2xl"><div class="font-semibold text-emerald-400">Tag 6</div>Vue + MongoDB</div>
-                    <div class="bg-zinc-900 p-3 rounded-2xl col-span-2 md:col-span-2"><div class="font-semibold text-emerald-400">Tag 7</div>Wiederholung + Schwächen</div>
-                </div>
+            <div id="topics-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+                <!-- Populated dynamically via JS -->
             </div>
-        </div>
+        </section>
 
-        <!-- FOLIEN & THEORIE -->
-        <div id="tab-1" class="tab-content hidden">
-            <div class="mb-4">
-                <h2 class="section-header">Folien &amp; Theorie</h2>
-                <p class="text-sm text-zinc-400">Kerninhalte aus den Vorlesungsfolien – priorisiert.</p>
-            </div>
-
-            <!-- Modernes JavaScript -->
-            <div class="glass p-6 rounded-3xl mb-4">
-                <div class="flex items-center gap-x-2 mb-3">
-                    <span class="priority-high text-xs px-3 py-1 rounded-2xl border">Sehr wichtig</span>
-                    <span class="font-semibold text-lg">Modernes JavaScript (T2)</span>
+        <!-- ==================== PRÜFUNGSTRAINING ==================== -->
+        <section id="training" class="section">
+            <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-y-3 mb-6">
+                <div>
+                    <h2 class="font-display text-3xl tracking-tighter font-semibold">Prüfungstraining</h2>
+                    <p class="text-slate-600">Wichtige Klausurfragen (besonders 6–10 Punkte). Markiere sie als geübt.</p>
                 </div>
-                <div class="text-sm space-y-2 text-zinc-300">
-                    <div><strong>var vs let vs const</strong><br><span class="text-xs text-zinc-400">const = nicht neu zuweisbar + Block-Scope • let = änderbar + Block-Scope • var = Function-Scope + Hoisting</span></div>
-                    <div><strong>Scope</strong><br><span class="text-xs text-zinc-400">Function-Scope vs Block-Scope</span></div>
-                    <div><strong>Klassen &amp; Vererbung</strong><br><span class="text-xs text-zinc-400">class + extends + super()</span></div>
-                    <div><strong>Closures</strong><br><span class="text-xs text-zinc-400">Innere Funktion hat Zugriff auf Variablen der äußeren Funktion</span></div>
-                </div>
-                <textarea class="mt-4 w-full bg-zinc-950 border border-zinc-700 rounded-xl p-3 text-sm h-16" placeholder="Eigene Notizen..."></textarea>
-            </div>
-
-            <!-- Asynchrone Programmierung -->
-            <div class="glass p-6 rounded-3xl mb-4">
-                <div class="flex items-center gap-x-2 mb-3">
-                    <span class="priority-high text-xs px-3 py-1 rounded-2xl border">Sehr wichtig</span>
-                    <span class="font-semibold text-lg">Asynchrone Programmierung &amp; Node.js</span>
-                </div>
-                <div class="text-sm space-y-2 text-zinc-300">
-                    <div><strong>Single-Threaded + Event Loop</strong><br><span class="text-xs text-zinc-400">JavaScript läuft auf einem Thread. I/O wird ans Betriebssystem ausgelagert.</span></div>
-                    <div><strong>Promises &amp; async/await</strong><br><span class="text-xs text-zinc-400">Promise = Objekt für zukünftigen Wert. async/await = lesbarere Syntax.</span></div>
-                </div>
-                <textarea class="mt-4 w-full bg-zinc-950 border border-zinc-700 rounded-xl p-3 text-sm h-16" placeholder="Eigene Notizen..."></textarea>
-            </div>
-
-            <!-- REST & Express -->
-            <div class="glass p-6 rounded-3xl mb-4">
-                <div class="flex items-center gap-x-2 mb-3">
-                    <span class="priority-high text-xs px-3 py-1 rounded-2xl border">Sehr wichtig</span>
-                    <span class="font-semibold text-lg">REST &amp; Express.js (T3)</span>
-                </div>
-                <div class="text-sm space-y-2 text-zinc-300">
-                    <div><strong>REST = Representational State Transfer</strong><br><span class="text-xs text-zinc-400">Stateless + Uniform Interface</span></div>
-                    <div><strong>CRUD ↔ HTTP</strong><br><span class="text-xs text-zinc-400">Create=POST, Read=GET, Update=PUT, Delete=DELETE</span></div>
-                    <div><strong>Express Basics</strong><br><span class="text-xs text-zinc-400">app.use(express.static()), app.get(), req.params, res.json()</span></div>
-                </div>
-                <textarea class="mt-4 w-full bg-zinc-950 border border-zinc-700 rounded-xl p-3 text-sm h-16" placeholder="Eigene Notizen..."></textarea>
-            </div>
-
-            <!-- SOA -->
-            <div class="glass p-6 rounded-3xl mb-4">
-                <div class="flex items-center gap-x-2 mb-3">
-                    <span class="priority-medium text-xs px-3 py-1 rounded-2xl border">Wichtig</span>
-                    <span class="font-semibold text-lg">Architekturen: Monolith vs SOA (T3)</span>
-                </div>
-                <div class="text-sm space-y-2 text-zinc-300">
-                    <div><strong>Monolith</strong><br><span class="text-xs text-zinc-400">Eine große Anwendung. Einfach zu starten, aber schwer skalierbar.</span></div>
-                    <div><strong>SOA (Service Oriented Architecture)</strong><br><span class="text-xs text-zinc-400">System wird in unabhängige Services aufgeteilt. Bessere Wartbarkeit und Skalierbarkeit.</span></div>
-                </div>
-                <textarea class="mt-4 w-full bg-zinc-950 border border-zinc-700 rounded-xl p-3 text-sm h-16" placeholder="Eigene Notizen..."></textarea>
-            </div>
-
-            <!-- Auth -->
-            <div class="glass p-6 rounded-3xl mb-4">
-                <div class="flex items-center gap-x-2 mb-3">
-                    <span class="priority-high text-xs px-3 py-1 rounded-2xl border">Sehr wichtig</span>
-                    <span class="font-semibold text-lg">Cookies, Sessions &amp; Token Auth (T6)</span>
-                </div>
-                <div class="text-sm space-y-2 text-zinc-300">
-                    <div><strong>Cookie Security Flags</strong><br><span class="text-xs text-zinc-400">Secure • HttpOnly • SameSite</span></div>
-                    <div><strong>Token-basierte Auth (JWT)</strong><br><span class="text-xs text-zinc-400">Login → signiertes JWT → Client sendet es bei jedem Request (stateless).</span></div>
-                </div>
-                <textarea class="mt-4 w-full bg-zinc-950 border border-zinc-700 rounded-xl p-3 text-sm h-16" placeholder="Eigene Notizen..."></textarea>
-            </div>
-
-            <!-- Security -->
-            <div class="glass p-6 rounded-3xl mb-4">
-                <div class="flex items-center gap-x-2 mb-3">
-                    <span class="priority-medium text-xs px-3 py-1 rounded-2xl border">Wichtig</span>
-                    <span class="font-semibold text-lg">Security &amp; HTTPS (T6)</span>
-                </div>
-                <div class="text-sm space-y-2 text-zinc-300">
-                    <div><strong>SQL-Injection</strong><br><span class="text-xs text-zinc-400">Schutz: Prepared Statements + ORM</span></div>
-                    <div><strong>XSS &amp; CSRF</strong><br><span class="text-xs text-zinc-400">XSS → Input Validation + CSP • CSRF → SameSite Cookies</span></div>
-                    <div><strong>HTTPS / Zertifikate</strong><br><span class="text-xs text-zinc-400">Key-Pair → CSR → CA signiert → Zertifikat</span></div>
-                </div>
-                <textarea class="mt-4 w-full bg-zinc-950 border border-zinc-700 rounded-xl p-3 text-sm h-16" placeholder="Eigene Notizen..."></textarea>
-            </div>
-
-            <!-- Vue -->
-            <div class="glass p-6 rounded-3xl mb-4">
-                <div class="flex items-center gap-x-2 mb-3">
-                    <span class="priority-medium text-xs px-3 py-1 rounded-2xl border">Wichtig</span>
-                    <span class="font-semibold text-lg">Vue.js &amp; MVVM (T4)</span>
-                </div>
-                <div class="text-sm space-y-2 text-zinc-300">
-                    <div><strong>MVVM</strong><br><span class="text-xs text-zinc-400">Model – View – ViewModel mit Two-Way Data Binding</span></div>
-                    <div><strong>Lifecycle Hooks</strong><br><span class="text-xs text-zinc-400">created • mounted (gut für API Calls)</span></div>
-                </div>
-                <textarea class="mt-4 w-full bg-zinc-950 border border-zinc-700 rounded-xl p-3 text-sm h-16" placeholder="Eigene Notizen..."></textarea>
-            </div>
-
-            <!-- MongoDB -->
-            <div class="glass p-6 rounded-3xl">
-                <div class="flex items-center gap-x-2 mb-3">
-                    <span class="priority-medium text-xs px-3 py-1 rounded-2xl border">Wichtig</span>
-                    <span class="font-semibold text-lg">MongoDB &amp; NoSQL (T5)</span>
-                </div>
-                <div class="text-sm space-y-2 text-zinc-300">
-                    <div><strong>CRUD Operationen</strong><br><span class="text-xs text-zinc-400">insertOne, find, updateOne, deleteOne</span></div>
-                </div>
-                <textarea class="mt-4 w-full bg-zinc-950 border border-zinc-700 rounded-xl p-3 text-sm h-16" placeholder="Eigene Notizen..."></textarea>
-            </div>
-        </div>
-
-        <!-- PRÜFUNGSTRAINING -->
-        <div id="tab-2" class="tab-content hidden">
-            <h2 class="section-header mb-2">Prüfungstraining</h2>
-            <p class="text-sm text-zinc-400 mb-4">Beispielklausur 2024 (andere Dozenten).</p>
-            <div class="glass p-5 rounded-2xl mb-3">
-                <div class="flex justify-between"><div><span class="font-mono text-xs">Q9</span> Token-basierte Authentifizierung skizzieren</div><div class="text-amber-400 text-xs">10 Pkt</div></div>
-                <button onclick="this.innerHTML='✓ Erledigt';this.classList.add('bg-emerald-600')" class="mt-3 text-xs px-4 py-1.5 rounded-2xl bg-zinc-800 border border-zinc-600">Als erledigt markieren</button>
-            </div>
-            <div class="glass p-5 rounded-2xl">
-                <div class="flex justify-between"><div><span class="font-mono text-xs">Q16</span> Express Server mit static + /ticket/:id</div><div class="text-amber-400 text-xs">10 Pkt</div></div>
-                <button onclick="this.innerHTML='✓ Erledigt';this.classList.add('bg-emerald-600')" class="mt-3 text-xs px-4 py-1.5 rounded-2xl bg-zinc-800 border border-zinc-600">Als erledigt markieren</button>
-            </div>
-        </div>
-
-        <!-- MIT GROK ÜBEN -->
-        <div id="tab-3" class="tab-content hidden">
-            <h2 class="section-header mb-4">Mit Grok üben</h2>
-            <div class="glass p-6 rounded-3xl mb-6">
-                <div class="grid md:grid-cols-2 gap-4">
-                    <select id="grok-topic" class="bg-zinc-900 border border-zinc-700 rounded-2xl px-4 py-3 text-sm">
-                        <option value="Modernes JavaScript">Modernes JavaScript</option>
-                        <option value="REST &amp; Express.js">REST &amp; Express.js</option>
-                        <option value="SOA vs Monolith">SOA vs Monolith</option>
-                        <option value="Token-basierte Authentifizierung">Token-Authentifizierung</option>
-                        <option value="Cookies &amp; Security">Cookies &amp; Security</option>
-                        <option value="Security">Security</option>
-                        <option value="Vue.js &amp; MVVM">Vue.js &amp; MVVM</option>
-                        <option value="MongoDB CRUD">MongoDB CRUD</option>
-                    </select>
-                    <select id="grok-difficulty" class="bg-zinc-900 border border-zinc-700 rounded-2xl px-4 py-3 text-sm">
-                        <option value="4-6 Punkte Theorie">4–6 Punkte Theorie</option>
-                        <option value="8 Punkte">8 Punkte</option>
-                        <option value="10 Punkte (Skizze)">10 Punkte (Skizze)</option>
+                
+                <div class="flex items-center gap-x-3">
+                    <div class="relative flex-1 md:w-72">
+                        <input type="text" id="question-search" placeholder="Fragen durchsuchen..." 
+                               oninput="filterQuestions()"
+                               class="w-full bg-white border border-slate-300 focus:border-emerald-400 transition-colors pl-10 py-2.5 text-sm rounded-2xl outline-none">
+                        <i class="fa-solid fa-search absolute left-4 top-3.5 text-slate-400"></i>
+                    </div>
+                    
+                    <select id="question-filter" onchange="filterQuestions()" 
+                            class="bg-white border border-slate-300 text-sm rounded-2xl px-4 py-2.5 outline-none">
+                        <option value="all">Alle Fragen</option>
+                        <option value="done">Nur erledigte</option>
+                        <option value="pending">Noch offen</option>
                     </select>
                 </div>
-                <button onclick="generateGrokPrompt()" class="mt-4 w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 rounded-3xl font-semibold flex items-center justify-center gap-x-2">
-                    <i class="fa-solid fa-magic"></i> <span>Prompt generieren</span>
-                </button>
             </div>
 
-            <div id="grok-output" class="hidden glass p-6 rounded-3xl">
-                <div class="flex justify-between mb-3"><div class="font-semibold">Dein Prompt</div><button onclick="copyPrompt()" class="text-xs px-3 py-1 bg-zinc-800 rounded-xl">Kopieren</button></div>
-                <div id="grok-text" class="code-block text-sm"></div>
+            <div id="questions-container" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <!-- Populated by JS -->
+            </div>
+            
+            <div class="mt-6 text-center">
+                <div class="inline-flex items-center gap-x-2 text-sm text-slate-500 bg-white px-4 py-2 rounded-2xl border">
+                    <i class="fa-solid fa-info-circle"></i>
+                    <span>Markiere Fragen als erledigt, um deinen Fortschritt zu tracken. Musterantworten dienen dem Selbstcheck.</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== MIT GROK ÜBEN ==================== -->
+        <section id="grok" class="section">
+            <div class="max-w-3xl mx-auto">
+                <div class="text-center mb-8">
+                    <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 text-white rounded-3xl mb-4 shadow-inner">
+                        <i class="fa-solid fa-robot text-4xl"></i>
+                    </div>
+                    <h2 class="font-display text-3xl tracking-tighter font-semibold">Mit Grok neue Aufgaben generieren</h2>
+                    <p class="text-slate-600 mt-2 max-w-md mx-auto">Erstelle hochwertige, prüfungsnahe Prompts für zusätzliche Übungsaufgaben.</p>
+                </div>
+
+                <div class="bg-white rounded-3xl border border-slate-200 p-7">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        <!-- Topic -->
+                        <div>
+                            <label class="block text-xs font-semibold tracking-wider text-slate-500 mb-1.5">THEMA</label>
+                            <select id="grok-topic" class="w-full border border-slate-300 rounded-2xl px-4 py-3 text-sm outline-none focus:border-emerald-400">
+                                <!-- Populated by JS -->
+                            </select>
+                        </div>
+                        
+                        <!-- Difficulty -->
+                        <div>
+                            <label class="block text-xs font-semibold tracking-wider text-slate-500 mb-1.5">SCHWIERIGKEIT / PUNKTE</label>
+                            <select id="grok-difficulty" class="w-full border border-slate-300 rounded-2xl px-4 py-3 text-sm outline-none focus:border-emerald-400">
+                                <option value="4">4 Punkte (einfach)</option>
+                                <option value="6">6 Punkte (mittel)</option>
+                                <option value="8" selected>8 Punkte (anspruchsvoll)</option>
+                                <option value="10">10 Punkte (schwer)</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Type -->
+                        <div>
+                            <label class="block text-xs font-semibold tracking-wider text-slate-500 mb-1.5">FRAGENTYP</label>
+                            <select id="grok-type" class="w-full border border-slate-300 rounded-2xl px-4 py-3 text-sm outline-none focus:border-emerald-400">
+                                <option value="erklaerung">Erklärung / Definition</option>
+                                <option value="vergleich">Vergleich (z.B. Monolith vs SOA)</option>
+                                <option value="code">Code-Snippet schreiben / analysieren</option>
+                                <option value="vorteile">Vorteile &amp; Nachteile</option>
+                                <option value="sicherheit">Security-Szenario</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button onclick="generateGrokPrompt()" 
+                            class="mt-6 w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 transition-all text-white font-semibold rounded-2xl flex items-center justify-center gap-x-2 text-sm tracking-wider">
+                        <i class="fa-solid fa-magic"></i>
+                        <span>HOCHWERTIGEN PROMPT GENERIEREN</span>
+                    </button>
+
+                    <!-- Generated Prompt -->
+                    <div id="grok-result" class="hidden mt-6 border border-emerald-200 bg-emerald-50/60 rounded-2xl p-5">
+                        <div class="flex justify-between items-center mb-3">
+                            <div class="font-semibold text-emerald-700 flex items-center gap-x-2 text-sm">
+                                <i class="fa-solid fa-check-circle"></i> 
+                                <span>Dein personalisierter Prompt</span>
+                            </div>
+                            <button onclick="copyGrokPrompt()" 
+                                    class="text-xs flex items-center gap-x-1.5 px-3 py-1 bg-white hover:bg-emerald-100 border border-emerald-200 text-emerald-700 rounded-xl font-medium transition-colors">
+                                <i class="fa-solid fa-copy"></i>
+                                <span>Kopieren</span>
+                            </button>
+                        </div>
+                        <pre id="grok-prompt-text" 
+                             class="text-xs bg-white p-4 rounded-xl border border-emerald-100 overflow-auto max-h-72 text-emerald-800 whitespace-pre-wrap font-mono leading-relaxed"></pre>
+                        
+                        <p class="text-[10px] text-emerald-600 mt-3 px-1">Kopiere diesen Prompt und sende ihn an Grok (oder ein anderes LLM). Die generierten Fragen sind ideal zum Üben.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHEAT SHEET ==================== -->
+        <section id="cheatsheet" class="section">
+            <div class="mb-6">
+                <h2 class="font-display text-3xl tracking-tighter font-semibold">Cheat Sheet – Schnellübersicht</h2>
+                <p class="text-slate-600">Zentrale Konzepte auf einen Blick. Ideal zum schnellen Nachschlagen vor der Prüfung.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+                
+                <!-- JS Variablen & Scopes -->
+                <div class="bg-white border border-slate-200 rounded-3xl p-6">
+                    <h4 class="font-semibold mb-4 flex items-center gap-x-2 text-emerald-700">
+                        <i class="fa-brands fa-js text-lg"></i> JavaScript: var / let / const
+                    </h4>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex gap-3"><span class="font-mono text-emerald-600 w-12 flex-shrink-0">var</span> <span class="text-slate-600">Function Scope • Hoisting • kann re-deklariert werden</span></div>
+                        <div class="flex gap-3"><span class="font-mono text-emerald-600 w-12 flex-shrink-0">let</span> <span class="text-slate-600">Block Scope • keine Hoisting • kann reassigned werden</span></div>
+                        <div class="flex gap-3"><span class="font-mono text-emerald-600 w-12 flex-shrink-0">const</span> <span class="text-slate-600">Block Scope • muss initialisiert werden • Referenz unveränderbar (nicht Inhalt)</span></div>
+                    </div>
+                    <div class="mt-4 pt-4 border-t text-xs text-slate-500">Empfehlung: Immer <span class="font-semibold">let</span> oder <span class="font-semibold">const</span> verwenden. Nie implizit globale Variablen!</div>
+                </div>
+
+                <!-- REST -->
+                <div class="bg-white border border-slate-200 rounded-3xl p-6">
+                    <h4 class="font-semibold mb-4 flex items-center gap-x-2 text-emerald-700">
+                        <i class="fa-solid fa-exchange-alt text-lg"></i> REST &amp; HTTP-Methoden
+                    </h4>
+                    <div class="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                        <div><span class="font-semibold text-emerald-600">GET</span> <span class="text-slate-500">— Read / Abrufen</span></div>
+                        <div><span class="font-semibold text-emerald-600">POST</span> <span class="text-slate-500">— Create / Erstellen</span></div>
+                        <div><span class="font-semibold text-emerald-600">PUT</span> <span class="text-slate-500">— Update (vollständig)</span></div>
+                        <div><span class="font-semibold text-emerald-600">DELETE</span> <span class="text-slate-500">— Delete / Löschen</span></div>
+                    </div>
+                    <div class="mt-4 text-xs bg-emerald-50 border border-emerald-100 p-3 rounded-2xl text-emerald-700">
+                        <strong>REST-Prinzipien:</strong> Stateless, Uniform Interface, Ressourcen über URIs identifizierbar, Repräsentationen (JSON)
+                    </div>
+                </div>
+
+                <!-- Security -->
+                <div class="bg-white border border-slate-200 rounded-3xl p-6">
+                    <h4 class="font-semibold mb-4 flex items-center gap-x-2 text-emerald-700">
+                        <i class="fa-solid fa-shield-halved text-lg"></i> Web-Security
+                    </h4>
+                    <div class="space-y-4 text-sm">
+                        <div>
+                            <div class="font-semibold">SQL-Injection (SQLi)</div>
+                            <div class="text-xs text-slate-600">Schädlicher SQL-Code in Formulare/URL-Parameter. Schutz: Prepared Statements / Parameterized Queries.</div>
+                        </div>
+                        <div>
+                            <div class="font-semibold">Cross-Site Scripting (XSS)</div>
+                            <div class="text-xs text-slate-600">Böswilliges JS in Webseiten. Schutz: Content-Security-Policy (CSP), escaping.</div>
+                        </div>
+                        <div>
+                            <div class="font-semibold">CSRF</div>
+                            <div class="text-xs text-slate-600">Gefälschte Requests mit gültiger Authentifizierung. Schutz: CSRF-Token + SameSite Cookies.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cookies & Sessions -->
+                <div class="bg-white border border-slate-200 rounded-3xl p-6">
+                    <h4 class="font-semibold mb-4 flex items-center gap-x-2 text-emerald-700">
+                        <i class="fa-solid fa-cookie-bite text-lg"></i> Cookies &amp; Sessions
+                    </h4>
+                    <div class="text-sm space-y-2">
+                        <div>HTTP ist <span class="font-semibold">stateless</span>. Cookies ermöglichen State.</div>
+                        <div class="text-xs">Server setzt Cookie via <span class="font-mono bg-slate-100 px-1.5 py-px rounded">Set-Cookie</span> Header.</div>
+                        <div class="text-xs">Browser sendet Cookie automatisch im <span class="font-mono bg-slate-100 px-1.5 py-px rounded">Cookie</span> Header zurück.</div>
+                        
+                        <div class="pt-2 text-xs grid grid-cols-2 gap-x-2">
+                            <div><span class="font-medium">HttpOnly</span> — Kein JS-Zugriff</div>
+                            <div><span class="font-medium">Secure</span> — Nur HTTPS</div>
+                            <div><span class="font-medium">SameSite</span> — CSRF-Schutz</div>
+                            <div><span class="font-medium">Max-Age / Expires</span> — Persistenz</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event Loop -->
+                <div class="bg-white border border-slate-200 rounded-3xl p-6">
+                    <h4 class="font-semibold mb-4 flex items-center gap-x-2 text-emerald-700">
+                        <i class="fa-solid fa-sync text-lg"></i> Event Loop &amp; Async
+                    </h4>
+                    <div class="text-sm">
+                        Node.js &amp; Browser sind <strong>single-threaded</strong> mit Event Loop.<br><br>
+                        <span class="text-xs">Call Stack → Web APIs / libuv → Callback Queue → Event Loop</span><br><br>
+                        <span class="font-medium">Callbacks → Promises → async/await</span> für bessere Lesbarkeit.
+                    </div>
+                </div>
+
+                <!-- MongoDB -->
+                <div class="bg-white border border-slate-200 rounded-3xl p-6">
+                    <h4 class="font-semibold mb-4 flex items-center gap-x-2 text-emerald-700">
+                        <i class="fa-solid fa-database text-lg"></i> MongoDB NoSQL
+                    </h4>
+                    <div class="text-sm">
+                        Dokumentenorientiert (BSON). Flexible Schemas.<br><br>
+                        <span class="font-mono text-xs">insertOne • find • updateOne • deleteOne</span><br>
+                        <span class="text-xs text-slate-500">Im Workshop: South Park Characters Collection mit Node.js Driver.</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal for Sample Answers -->
+    <div id="answer-modal" onclick="if (event.target.id === 'answer-modal') closeModal()" class="hidden fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4">
+        <div onclick="event.stopImmediatePropagation()" class="modal bg-white rounded-3xl max-w-2xl w-full max-h-[85vh] overflow-hidden shadow-2xl border border-slate-200">
+            <div class="px-6 py-4 border-b flex items-center justify-between bg-slate-50">
+                <div>
+                    <span id="modal-question-points" class="klausur-badge bg-emerald-100 text-emerald-700"></span>
+                    <span id="modal-question-text" class="font-semibold ml-3 text-lg"></span>
+                </div>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 w-9 h-9 flex items-center justify-center text-xl">×</button>
+            </div>
+            <div class="p-6 overflow-auto max-h-[60vh]">
+                <div class="text-xs uppercase tracking-[1px] font-semibold text-emerald-600 mb-2">MUSTERANTWORT / WICHTIGE PUNKTE</div>
+                <div id="modal-answer-content" class="prose-custom text-[15px] leading-relaxed text-slate-700"></div>
+            </div>
+            <div class="px-6 py-4 border-t bg-slate-50 flex justify-end">
+                <button onclick="closeModal()" 
+                        class="px-6 py-2 text-sm font-semibold bg-white border border-slate-300 hover:bg-slate-100 rounded-2xl">Schließen</button>
             </div>
         </div>
-
-        <!-- CHEAT SHEET -->
-        <div id="tab-4" class="tab-content hidden">
-            <h2 class="section-header mb-4">Cheat Sheet</h2>
-            <div class="grid md:grid-cols-2 gap-4 text-sm">
-                <div class="glass p-5 rounded-2xl">
-                    <div class="font-semibold text-emerald-400 mb-2">REST</div>
-                    <div class="text-xs">Representational State Transfer<br>• Stateless<br>• Uniform Interface<br>• Create=POST, Read=GET, Update=PUT, Delete=DELETE</div>
-                </div>
-                <div class="glass p-5 rounded-2xl">
-                    <div class="font-semibold text-emerald-400 mb-2">Cookie Flags</div>
-                    <div class="text-xs">• Secure (nur HTTPS)<br>• HttpOnly (XSS-Schutz)<br>• SameSite (CSRF-Schutz)</div>
-                </div>
-                <div class="glass p-5 rounded-2xl">
-                    <div class="font-semibold text-emerald-400 mb-2">SOA Vorteile</div>
-                    <div class="text-xs">Wiederverwendbarkeit, unabhängige Entwicklung, bessere Skalierbarkeit</div>
-                </div>
-                <div class="glass p-5 rounded-2xl">
-                    <div class="font-semibold text-emerald-400 mb-2">JWT</div>
-                    <div class="text-xs">Header.Payload.Signature<br>Signatur = HMACSHA256(Base64(Header) + "." + Base64(Payload), secret)</div>
-                </div>
-            </div>
-        </div>
-
     </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-[200] flex flex-col gap-2"></div>
+
+    <footer class="max-w-7xl mx-auto px-6 pb-8 text-center text-[10px] text-slate-400">
+        Basierend auf den Vorlesungsfolien Web-Engineering (FH Salzburg) • Alle Daten werden ausschließlich lokal im Browser gespeichert (localStorage) • Keine Server-Kommunikation
+    </footer>
 
     <script>
-        function initTailwind() {}
-
-        let currentTab = 0;
-        function switchTab(tab) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById('tab-' + tab).classList.remove('hidden');
-            document.querySelectorAll('.nav-tab').forEach((el, i) => el.classList.toggle('active', i === tab));
-            currentTab = tab;
+        // Tailwind script
+        function initTailwind() {
+            document.documentElement.style.setProperty('--accent', '#10b981');
+            
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            'display': ['Space Grotesk', 'Inter', 'system-ui', 'sans-serif']
+                        }
+                    }
+                }
+            };
         }
 
-        // ==================== EXPORT / IMPORT ====================
-        function exportProgress() {
-            const data = {};
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                // Nur relevante Keys exportieren
-                if (key.includes('exam') || key.includes('flash') || key.includes('checklist') || 
-                    key.includes('note') || key.includes('quiz') || key.includes('folien')) {
-                    data[key] = localStorage.getItem(key);
+        // ==================== DATA & STATE ====================
+        let appData = {
+            notes: {},           // { topicId: "meine notizen..." }
+            completedQuestions: [], // ["q1", "q5", ...]
+            planProgress: {}     // { "1": true, "2": false, ... }
+        };
+
+        const TOPICS = [
+            {
+                id: "js-es6",
+                title: "Modernes JavaScript (ES6) & Variablen",
+                explanation: "ES6 (ECMAScript 2015) brachte let/const (Block Scope), Arrow Functions, Promises, Klassen (syntaktisch), Module und viele nützliche Array/String-Methoden. Primitive Typen (string, number, boolean, null, undefined) sind immutable – der Wert selbst kann nicht verändert werden.",
+                keyPoints: ["let & const statt var", "Block Scope vs Function Scope", "Primitive Typen sind immutable", "Klassen sind syntaktischer Zucker über Prototypen"]
+            },
+            {
+                id: "scopes",
+                title: "Scopes: Function Scope vs Block Scope",
+                explanation: "var hat Function Scope und wird gehoben (hoisted). let und const haben Block Scope (if, for, {} ) und verhindern viele klassische Fehler in Schleifen und Bedingungen.",
+                keyPoints: ["var → Function Scope + Hoisting", "let/const → Block Scope", "Besser lesbar und weniger Fehlerquellen"]
+            },
+            {
+                id: "async",
+                title: "Asynchrone Programmierung & Event Loop",
+                explanation: "JavaScript ist single-threaded. Der Event Loop ermöglicht nicht-blockierende Ausführung: Call Stack, Web APIs (Node: libuv), Callback Queue. Callbacks → Promises → async/await für bessere Lesbarkeit. IO-Operationen werden ans Betriebssystem ausgelagert.",
+                keyPoints: ["Single-Threaded + Event Loop", "Nicht-blockierend durch Callbacks/Promises", "CPU-intensive Tasks müssen ausgelagert werden"]
+            },
+            {
+                id: "rest-express",
+                title: "REST-Architektur & Express.js",
+                explanation: "REST = Representational State Transfer. Wichtige Eigenschaften: Statelessness, Uniform Interface, Ressourcen über URIs. CRUD-Operationen werden auf HTTP-Methoden abgebildet. Express.js ist ein minimalistisches Node.js-Framework zum einfachen Erstellen von Webservern und REST-APIs.",
+                keyPoints: ["Stateless", "Ressourcen + Repräsentationen", "GET=Read, POST=Create, PUT=Update, DELETE=Delete", "Express: Routing & Middleware"]
+            },
+            {
+                id: "architekturen",
+                title: "Web-Architekturen (Client-Server, Monolith, MV*)",
+                explanation: "Klassische Schichten: Presentation, Business Logic, Persistence, Data Layer. Client-Server ist Two-Layer. Monolith = alles in einem Prozess (einfach, aber schwer skalierbar). MV* (MVC/MVVM) trennt UI von Business-Logik für lose Kopplung – besonders im Frontend (Vue.js).",
+                keyPoints: ["Monolith: Einfach, aber Single Point of Failure", "Client-Server: Klare Trennung", "MVVM/MVC: Loose Coupling zwischen View und Model"]
+            },
+            {
+                id: "cookies",
+                title: "Cookies, Sessions & State Management",
+                explanation: "HTTP ist stateless. Cookies sind Key-Value-Paare, die der Browser automatisch bei passenden Requests mitsendet. Der Server setzt sie über den Set-Cookie Header. Ermöglichen 'Remember me', Session Management und personalisierte Erfahrungen. Wichtige Attribute: HttpOnly, Secure, SameSite, Max-Age.",
+                keyPoints: ["Set-Cookie Header (Server → Client)", "Cookie Header (Client → Server)", "Session vs Persistent Cookies", "SameSite schützt vor CSRF"]
+            },
+            {
+                id: "security",
+                title: "Web-Security: SQLi, XSS, CSRF & HTTPS",
+                explanation: "Häufige Bedrohungen: SQL-Injection (schädlicher SQL in Inputs), Cross-Site Scripting (böswilliges JS in Seiten), Cross-Site Request Forgery (gefälschte Requests mit gültiger Auth). HTTPS (TLS) verschlüsselt die Kommunikation. Schutzmaßnahmen: Prepared Statements, CSP, SameSite-Cookies, CSRF-Tokens.",
+                keyPoints: ["SQLi → Prepared Statements", "XSS → Output escaping + CSP", "CSRF → SameSite + CSRF-Token", "HTTPS für Transportverschlüsselung"]
+            },
+            {
+                id: "vue",
+                title: "Vue.js & MVVM-Architektur",
+                explanation: "Vue.js ist ein progressives, komponentenbasiertes Framework für reaktive Benutzeroberflächen. Es folgt dem MVVM-Pattern (Model-View-ViewModel). Reaktives Data-Binding, Single-File-Components und eine sanfte Lernkurve machen es sehr beliebt für moderne Frontends.",
+                keyPoints: ["Reaktives Data Binding", "Komponenten-basiert", "MVVM Pattern", "Single File Components (.vue)"]
+            },
+            {
+                id: "mongodb",
+                title: "MongoDB & NoSQL",
+                explanation: "MongoDB ist eine dokumentenorientierte NoSQL-Datenbank. Daten werden als flexible BSON-Dokumente gespeichert (ähnlich JSON). Kein starres Schema. Im Workshop wurde eine Node.js-Anwendung mit dem MongoDB Driver erstellt, die CRUD-Operationen auf einer characters Collection durchführt.",
+                keyPoints: ["Dokumentenorientiert (BSON)", "Flexible Schemas", "CRUD: insertOne, find, updateOne, deleteOne", "Gut für schnelle Iterationen"]
+            }
+        ];
+
+        const QUESTIONS = [
+            {
+                id: "q1",
+                text: "Was sind die Schlüsselwörter var, let und const in JavaScript? Wann sind die jeweiligen Schlüsselwörter zu präferieren?",
+                points: 4,
+                topic: "js-es6",
+                answer: "var hat Function Scope und wird gehoben (hoisted). let und const haben Block Scope. const verhindert Re-Assignment der Variable (nicht des Inhalts bei Objekten). Empfehlung: Immer let oder const verwenden. var nur in sehr alten Codebasen oder wenn explizit Hoisting gewünscht wird. Implizit globale Variablen (ohne Schlüsselwort) sind zu vermeiden – sie verschmutzen den globalen Namespace und machen Code unlesbar."
+            },
+            {
+                id: "q2",
+                text: "Was sind Funktions- und Blockscopes und worin unterscheiden sich diese?",
+                points: 4,
+                topic: "scopes",
+                answer: "Function Scope (var): Die Variable ist in der gesamten Funktion sichtbar, in der sie deklariert wurde. Block Scope (let/const): Die Variable ist nur innerhalb des umschließenden Blocks {} (if, for, while etc.) sichtbar. Block Scope verhindert viele Fehler, z. B. in for-Schleifen mit setTimeout oder if-Blöcken."
+            },
+            {
+                id: "q3",
+                text: "Was ist asynchrone Programmierung und ist diese in JavaScript single- oder multi-threaded?",
+                points: 4,
+                topic: "async",
+                answer: "Asynchrone Programmierung ermöglicht, dass Aufgaben (z. B. IO) parallel zum Hauptthread ausgeführt werden, ohne zu blockieren. JavaScript ist single-threaded (ein Call Stack). Der Event Loop (mit Callback Queue) ermöglicht jedoch nicht-blockierende asynchrone Ausführung. IO-Operationen werden an das Betriebssystem (libuv in Node) ausgelagert. Callbacks, Promises und async/await sind die gängigen Abstraktionen."
+            },
+            {
+                id: "q4",
+                text: "Was sind typische Sicherheitsbedrohungen für Webanwendungen? Nennen Sie drei und beschreiben Sie diese kurz.",
+                points: 6,
+                topic: "security",
+                answer: "1. SQL-Injection (SQLi): Angreifer schleust schädlichen SQL-Code in Eingabefelder oder URL-Parameter ein, um Daten auszulesen oder zu manipulieren. Schutz: Prepared Statements.\n2. Cross-Site Scripting (XSS): Böswilliger JavaScript-Code wird in eine eigentlich vertrauenswürdige Seite eingeschleust und bei anderen Nutzern ausgeführt (z. B. Cookie-Diebstahl). Schutz: Output escaping + Content-Security-Policy.\n3. Cross-Site Request Forgery (CSRF): Ein eingeloggter Nutzer wird dazu verleitet, eine unbeabsichtigte Aktion auszuführen (z. B. Geld überweisen). Schutz: SameSite-Cookies + CSRF-Tokens."
+            },
+            {
+                id: "q5",
+                text: "Wie teilt ein Server dem Web-Client mit, dass er ein bestimmtes Cookie setzen soll und wie schickt der Browser dieses beim nächsten Request zurück?",
+                points: 4,
+                topic: "cookies",
+                answer: "Der Server sendet in der HTTP-Antwort den Header 'Set-Cookie: name=wert; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=3600'. Der Browser speichert das Cookie (je nach Attributen session- oder persistent). Bei jeder folgenden passenden Anfrage (gleiche Domain/Path) sendet der Browser automatisch den Header 'Cookie: name=wert' mit."
+            },
+            {
+                id: "q6",
+                text: "Für was steht das Akronym REST? Nennen Sie zwei wesentliche Eigenschaften und listen Sie die Hauptoperationen inklusive ihrer Entsprechungen als HTTP-Methode auf.",
+                points: 10,
+                topic: "rest-express",
+                answer: "REST = Representational State Transfer.\n\nWesentliche Eigenschaften:\n• Statelessness: Jeder Request enthält alle notwendigen Informationen (kein Server-seitiger Session-State zwischen Requests).\n• Uniform Interface: Einheitliche Schnittstelle über standardisierte HTTP-Methoden und Statuscodes.\n\nHauptoperationen (CRUD):\n• Create → POST /users\n• Read → GET /users oder GET /users/:id\n• Update → PUT /users/:id oder PATCH /users/:id\n• Delete → DELETE /users/:id"
+            },
+            {
+                id: "q7",
+                text: "Wie wird Speicher in JavaScript verwaltet? Erklären Sie kurz die Vorgänge.",
+                points: 4,
+                topic: "js-es6",
+                answer: "JavaScript verwendet automatische Speicherverwaltung durch den Garbage Collector (GC). Lebenszyklus: 1. Reservieren (bei Deklaration/Objekt-Erstellung), 2. Verwenden (lesen & schreiben), 3. Freigeben (wenn keine Referenzen mehr existieren). Referenzen in JS sind KEINE Pointer! Solange eine Variable oder ein Objekt referenziert wird, bleibt der Speicher belegt. Der GC erkennt unerreichbare Objekte und gibt den Speicher frei. Wichtig: Vermeide Memory Leaks durch zyklische Referenzen oder vergessene Event Listener."
+            },
+            {
+                id: "q8",
+                text: "Was sind „Implizit Globale Variablen“ in JS? Warum würden Sie diese (nicht) nutzen?",
+                points: 2,
+                topic: "js-es6",
+                answer: "Implizit globale Variablen entstehen, wenn eine Variable ohne var/let/const deklariert wird. Sie werden automatisch zur globalen Scope (window im Browser) hinzugefügt. Sie sind zu vermeiden, weil: 1. Sie den globalen Namespace verschmutzen, 2. Code schwer lesbar und wartbar wird, 3. Unerwartete Seiteneffekte und Konflikte in größeren Anwendungen entstehen. Immer explizit mit let oder const deklarieren!"
+            },
+            {
+                id: "q9",
+                text: "Welches Prinzip liegt hinter dem OOP-Konzept von JavaScript?",
+                points: 4,
+                topic: "js-es6",
+                answer: "JavaScript verwendet prototypenbasierte Vererbung (prototypal inheritance). Objekte können direkt von anderen Objekten erben, indem sie deren Prototyp als Fallback nutzen. Klassen (class, extends, constructor) sind seit ES6 rein syntaktischer Zucker – das zugrunde liegende Prototypen-System bleibt erhalten. Es gibt keine klassische Klassenvererbung wie in Java oder C#."
+            },
+            {
+                id: "q10",
+                text: "Beschreiben Sie den Aufbau einer typischen Client-Server-Architektur und nennen Sie Vorteile sowie Nachteile einer monolithischen Architektur.",
+                points: 6,
+                topic: "architekturen",
+                answer: "Client-Server: Zwei-Schichten-Modell. Der Client (Browser) sendet HTTP-Requests an den Server. Der Server verarbeitet die Anfrage (Business Logic + Datenbank) und sendet eine Response zurück. Der Server kann weiter in Layer unterteilt werden (Presentation/API, Business, Persistence, Data).\n\nMonolith: Vorteile – Einfach zu entwickeln und zu deployen, atomare Transaktionen, geringe Latenz zwischen Komponenten. Nachteile – Schwer horizontal skalierbar, langes Deployment bei Änderungen, Technology Lock-in, Single Point of Failure, schwierige Wartung bei wachsender Codebase."
+            },
+            {
+                id: "q11",
+                text: "Erklären Sie kurz, wie der Event Loop in Node.js funktioniert und warum Node.js trotz Single-Threading tausende gleichzeitige Verbindungen effizient handhaben kann.",
+                points: 8,
+                topic: "async",
+                answer: "Der Event Loop ist ein ständiger Prozess, der den Call Stack überprüft. Ist dieser leer, nimmt er Callbacks aus der Callback Queue und führt sie aus. IO-Operationen (Datei, Netzwerk, DB) werden nicht im JS-Thread ausgeführt, sondern an das Betriebssystem (libuv) delegiert. Sobald die Operation fertig ist, wird ein Event in die Queue gestellt. Dadurch kann ein einzelner Thread tausende gleichzeitige Verbindungen bedienen, ohne zu blockieren – solange keine CPU-intensiven Tasks im Event Loop laufen."
+            },
+            {
+                id: "q12",
+                text: "Was passiert beim Setzen eines Cookies mit den Attributen HttpOnly, Secure und SameSite=Strict? Welchen Schutz bieten diese Attribute?",
+                points: 6,
+                topic: "cookies",
+                answer: "HttpOnly: Das Cookie kann nicht über document.cookie im JavaScript gelesen werden → Schutz vor XSS.\nSecure: Das Cookie wird nur über HTTPS übertragen → Schutz vor Man-in-the-Middle auf unsicheren Netzwerken.\nSameSite=Strict: Das Cookie wird nur bei Same-Site Requests mitgesendet (nicht bei Cross-Site Requests wie von einem anderen Tab oder per Link) → starker Schutz gegen CSRF-Angriffe."
+            }
+        ];
+
+        // 7-Day Plan definition
+        const LEARNING_PLAN = [
+            { day: 1, focus: "Modernes JavaScript & Scopes", topics: ["js-es6", "scopes"] },
+            { day: 2, focus: "Asynchrone Programmierung & Event Loop", topics: ["async"] },
+            { day: 3, focus: "REST, HTTP & Express.js", topics: ["rest-express"] },
+            { day: 4, focus: "Architekturen & MV*", topics: ["architekturen", "vue"] },
+            { day: 5, focus: "Cookies, Sessions & State", topics: ["cookies"] },
+            { day: 6, focus: "Security & HTTPS", topics: ["security"] },
+            { day: 7, focus: "MongoDB, Review & Prüfungstraining", topics: ["mongodb"] }
+        ];
+
+        // ==================== CORE FUNCTIONS ====================
+        function loadData() {
+            const saved = localStorage.getItem('we_trainer_data');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    appData = { ...appData, ...parsed };
+                } catch (e) {
+                    console.warn('Konnte gespeicherte Daten nicht laden, starte neu.');
                 }
             }
             
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            // Initialize plan progress if empty
+            if (Object.keys(appData.planProgress).length === 0) {
+                LEARNING_PLAN.forEach(item => {
+                    appData.planProgress[item.day] = false;
+                });
+                saveData();
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem('we_trainer_data', JSON.stringify(appData));
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            const colors = type === 'success' 
+                ? 'bg-emerald-600 text-white' 
+                : 'bg-rose-600 text-white';
+            
+            toast.className = `toast flex items-center gap-x-3 px-5 py-3.5 rounded-2xl shadow-xl text-sm font-medium ${colors}`;
+            toast.innerHTML = `
+                <i class="fa-solid ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                <span>${message}</span>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.transition = 'all 0.25s ease';
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 200);
+            }, 2800);
+        }
+
+        // ==================== DASHBOARD ====================
+        function updateDashboard() {
+            // Topics with notes
+            const topicsWithNotes = Object.keys(appData.notes || {}).filter(k => appData.notes[k] && appData.notes[k].trim().length > 0).length;
+            document.getElementById('stat-topics').textContent = topicsWithNotes;
+
+            // Questions done
+            const doneCount = (appData.completedQuestions || []).length;
+            document.getElementById('stat-questions').textContent = doneCount;
+
+            // Overall progress
+            const totalTopics = TOPICS.length;
+            const totalQuestions = QUESTIONS.length;
+            const progress = Math.round(
+                ((topicsWithNotes / totalTopics) * 0.5 + (doneCount / totalQuestions) * 0.5) * 100
+            );
+            
+            document.getElementById('stat-overall').textContent = progress + '%';
+            document.getElementById('stat-progress-bar').style.width = progress + '%';
+
+            // Plan progress
+            const completedDays = Object.values(appData.planProgress || {}).filter(Boolean).length;
+            document.getElementById('plan-progress-text').innerHTML = `${completedDays}/7 Tage`;
+            
+            // Render plan cards
+            renderLearningPlan();
+        }
+
+        function renderLearningPlan() {
+            const container = document.querySelector('#dashboard .learning-plan');
+            if (!container) return;
+            container.innerHTML = '';
+
+            LEARNING_PLAN.forEach(planItem => {
+                const isCompleted = !!appData.planProgress[planItem.day];
+                
+                const card = document.createElement('div');
+                card.className = `day-card border rounded-2xl p-4 flex flex-col ${isCompleted ? 'completed border-emerald-300' : 'border-slate-200 bg-white'}`;
+                
+                card.innerHTML = `
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <div class="flex items-center gap-x-2">
+                                <span class="inline-flex items-center justify-center w-6 h-6 text-xs font-bold rounded-xl ${isCompleted ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-600'}">
+                                    ${planItem.day}
+                                </span>
+                                <span class="font-semibold text-sm">Tag ${planItem.day}</span>
+                            </div>
+                            <div class="mt-2 text-sm font-medium leading-tight pr-1">${planItem.focus}</div>
+                        </div>
+                        
+                        <label class="flex-shrink-0 cursor-pointer">
+                            <input type="checkbox" ${isCompleted ? 'checked' : ''} 
+                                   onchange="togglePlanDay(${planItem.day}, this.checked)"
+                                   class="w-4 h-4 accent-emerald-600 cursor-pointer">
+                        </label>
+                    </div>
+                    
+                    <div class="mt-auto pt-3 text-[10px] text-slate-400 flex items-center gap-x-1">
+                        <i class="fa-solid fa-book text-[9px]"></i>
+                        <span>${planItem.topics.length} Thema${planItem.topics.length > 1 ? 'n' : ''}</span>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        function togglePlanDay(day, checked) {
+            appData.planProgress[day] = checked;
+            saveData();
+            updateDashboard();
+            
+            if (checked) {
+                showToast(`Tag ${day} als abgeschlossen markiert`);
+            }
+        }
+
+        function resetPlan() {
+            if (!confirm('Möchtest du den gesamten 7-Tage-Plan zurücksetzen?')) return;
+            
+            LEARNING_PLAN.forEach(item => {
+                appData.planProgress[item.day] = false;
+            });
+            saveData();
+            updateDashboard();
+            showToast('Lernplan wurde zurückgesetzt');
+        }
+
+        function exportProgress() {
+            const dataStr = JSON.stringify(appData, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
+            
             const a = document.createElement('a');
             a.href = url;
             a.download = `web-engineering-fortschritt-${new Date().toISOString().slice(0,10)}.json`;
@@ -317,6 +910,8 @@
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
+            
+            showToast('Fortschritt erfolgreich exportiert');
         }
 
         function importProgress(event) {
@@ -326,16 +921,32 @@
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
-                    const data = JSON.parse(e.target.result);
+                    const imported = JSON.parse(e.target.result);
                     
-                    Object.keys(data).forEach(key => {
-                        localStorage.setItem(key, data[key]);
+                    // Basic validation
+                    if (!imported || typeof imported !== 'object') throw new Error('Ungültiges Format');
+                    
+                    appData = {
+                        notes: imported.notes || {},
+                        completedQuestions: imported.completedQuestions || [],
+                        planProgress: imported.planProgress || {}
+                    };
+                    
+                    // Ensure plan has all days
+                    LEARNING_PLAN.forEach(item => {
+                        if (appData.planProgress[item.day] === undefined) {
+                            appData.planProgress[item.day] = false;
+                        }
                     });
                     
-                    alert('Fortschritt erfolgreich importiert! Die Seite wird neu geladen.');
-                    location.reload();
-                } catch (error) {
-                    alert('Fehler beim Importieren der Datei. Bitte eine gültige JSON-Datei auswählen.');
+                    saveData();
+                    updateDashboard();
+                    renderTheoryTopics();
+                    renderQuestions();
+                    
+                    showToast('Fortschritt erfolgreich importiert!');
+                } catch (err) {
+                    showToast('Fehler beim Import: Ungültige Datei', 'error');
                 }
             };
             reader.readAsText(file);
@@ -344,28 +955,407 @@
             event.target.value = '';
         }
 
-        // ==================== GROK ====================
+        // ==================== THEORIE ====================
+        function renderTheoryTopics() {
+            const container = document.getElementById('topics-container');
+            container.innerHTML = '';
+
+            TOPICS.forEach(topic => {
+                const card = document.createElement('div');
+                card.className = 'topic-card bg-white border border-slate-200 rounded-3xl p-6 flex flex-col h-full';
+                
+                const notesValue = (appData.notes && appData.notes[topic.id]) || '';
+                
+                let keyPointsHTML = '';
+                if (topic.keyPoints && topic.keyPoints.length) {
+                    keyPointsHTML = '<ul class="mt-3 text-xs space-y-1 text-slate-600">';
+                    topic.keyPoints.forEach(pt => {
+                        keyPointsHTML += `<li class="flex gap-x-2"><span class="text-emerald-500 mt-px">•</span> <span>${pt}</span></li>`;
+                    });
+                    keyPointsHTML += '</ul>';
+                }
+
+                card.innerHTML = `
+                    <div class="flex-1">
+                        <div class="font-semibold text-lg leading-tight tracking-tight">${topic.title}</div>
+                        
+                        <div class="explanation-text mt-3 text-slate-600 text-[14.5px]">
+                            ${topic.explanation}
+                        </div>
+                        
+                        ${keyPointsHTML}
+                    </div>
+                    
+                    <div class="mt-5 pt-4 border-t border-slate-100">
+                        <label class="block text-xs font-semibold tracking-wider text-emerald-600 mb-1.5">DEINE NOTIZEN</label>
+                        <textarea data-topic-id="${topic.id}" 
+                                  class="w-full border border-slate-200 focus:border-emerald-400 transition-colors rounded-2xl p-3 text-sm resize-y min-h-[92px] outline-none"
+                                  placeholder="Schreibe hier deine eigenen Gedanken, Beispiele oder Zusammenfassungen...">${notesValue}</textarea>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+
+            // Attach input listeners (debounced save)
+            attachNoteListeners();
+        }
+
+        let noteSaveTimeout;
+        function attachNoteListeners() {
+            const textareas = document.querySelectorAll('#topics-container textarea');
+            
+            textareas.forEach(textarea => {
+                textarea.addEventListener('input', () => {
+                    clearTimeout(noteSaveTimeout);
+                    
+                    noteSaveTimeout = setTimeout(() => {
+                        const topicId = textarea.dataset.topicId;
+                        if (!appData.notes) appData.notes = {};
+                        
+                        appData.notes[topicId] = textarea.value;
+                        saveData();
+                        
+                        // Update dashboard stats live
+                        updateDashboard();
+                    }, 420);
+                });
+            });
+        }
+
+        // ==================== PRÜFUNGSTRAINING ====================
+        function renderQuestions(filteredQuestions = null) {
+            const container = document.getElementById('questions-container');
+            container.innerHTML = '';
+            
+            const questionsToShow = filteredQuestions || QUESTIONS;
+            
+            questionsToShow.forEach(q => {
+                const isDone = (appData.completedQuestions || []).includes(q.id);
+                
+                const card = document.createElement('div');
+                card.className = `question-card bg-white border ${isDone ? 'border-emerald-300 bg-emerald-50/30' : 'border-slate-200'} rounded-3xl p-5 flex flex-col`;
+                
+                const topicInfo = TOPICS.find(t => t.id === q.topic);
+                
+                card.innerHTML = `
+                    <div class="flex items-start justify-between gap-x-3">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-x-2 mb-1.5">
+                                <span class="klausur-badge ${isDone ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-700'}">${q.points} P</span>
+                                ${topicInfo ? `<span class="text-[10px] px-2 py-px bg-slate-100 text-slate-500 rounded-xl">${topicInfo.title.split(' ')[0]}</span>` : ''}
+                            </div>
+                            
+                            <div class="font-medium leading-snug text-[15px]">${q.text}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-auto pt-4 flex items-center gap-x-2">
+                        <button onclick="toggleQuestionDone('${q.id}', this)" 
+                                class="flex-1 text-xs font-semibold py-2 rounded-2xl transition-all flex items-center justify-center gap-x-1.5 ${isDone ? 'bg-emerald-600 text-white' : 'bg-white border border-slate-300 hover:bg-emerald-50 text-emerald-700'}">
+                            <i class="fa-solid ${isDone ? 'fa-check' : 'fa-check-circle'}"></i>
+                            <span>${isDone ? 'Erledigt' : 'Als erledigt markieren'}</span>
+                        </button>
+                        
+                        <button onclick="showSampleAnswer('${q.id}')" 
+                                class="flex-1 text-xs font-semibold py-2 rounded-2xl border border-slate-300 hover:bg-slate-50 flex items-center justify-center gap-x-1.5 text-slate-600">
+                            <i class="fa-solid fa-eye"></i>
+                            <span>Musterantwort</span>
+                        </button>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        function toggleQuestionDone(questionId, buttonElement) {
+            if (!appData.completedQuestions) appData.completedQuestions = [];
+            
+            const index = appData.completedQuestions.indexOf(questionId);
+            const isCurrentlyDone = index !== -1;
+            
+            if (isCurrentlyDone) {
+                appData.completedQuestions.splice(index, 1);
+                buttonElement.innerHTML = `<i class="fa-solid fa-check-circle"></i> <span>Als erledigt markieren</span>`;
+                buttonElement.className = `flex-1 text-xs font-semibold py-2 rounded-2xl transition-all flex items-center justify-center gap-x-1.5 bg-white border border-slate-300 hover:bg-emerald-50 text-emerald-700`;
+            } else {
+                appData.completedQuestions.push(questionId);
+                buttonElement.innerHTML = `<i class="fa-solid fa-check"></i> <span>Erledigt</span>`;
+                buttonElement.className = `flex-1 text-xs font-semibold py-2 rounded-2xl transition-all flex items-center justify-center gap-x-1.5 bg-emerald-600 text-white`;
+            }
+            
+            saveData();
+            updateDashboard();
+            
+            // Re-render to update card style
+            setTimeout(() => {
+                filterQuestions();
+            }, 120);
+        }
+
+        function filterQuestions() {
+            const searchTerm = document.getElementById('question-search').value.toLowerCase().trim();
+            const filterMode = document.getElementById('question-filter').value;
+            
+            let filtered = QUESTIONS;
+            
+            // Search
+            if (searchTerm.length > 1) {
+                filtered = filtered.filter(q => 
+                    q.text.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            // Filter mode
+            if (filterMode === 'done') {
+                filtered = filtered.filter(q => (appData.completedQuestions || []).includes(q.id));
+            } else if (filterMode === 'pending') {
+                filtered = filtered.filter(q => !(appData.completedQuestions || []).includes(q.id));
+            }
+            
+            renderQuestions(filtered);
+        }
+
+        function showSampleAnswer(questionId) {
+            const question = QUESTIONS.find(q => q.id === questionId);
+            if (!question) return;
+            
+            const modal = document.getElementById('answer-modal');
+            const contentEl = document.getElementById('modal-answer-content');
+            const pointsEl = document.getElementById('modal-question-points');
+            const textEl = document.getElementById('modal-question-text');
+            
+            pointsEl.textContent = `${question.points} Punkte`;
+            textEl.textContent = question.text;
+            
+            // Format answer with line breaks
+            contentEl.innerHTML = question.answer.replace(/\n/g, '<br>');
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('answer-modal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+
+        // ==================== GROK PROMPT GENERATOR ====================
+        function populateGrokSelects() {
+            const topicSelect = document.getElementById('grok-topic');
+            topicSelect.innerHTML = '<option value="">Thema wählen...</option>';
+            
+            TOPICS.forEach(topic => {
+                const opt = document.createElement('option');
+                opt.value = topic.id;
+                opt.textContent = topic.title;
+                topicSelect.appendChild(opt);
+            });
+            
+            // Add general option
+            const general = document.createElement('option');
+            general.value = 'allgemein';
+            general.textContent = 'Allgemeines Web-Engineering / Integration';
+            topicSelect.appendChild(general);
+        }
+
         function generateGrokPrompt() {
-            const topic = document.getElementById('grok-topic').value;
-            const diff = document.getElementById('grok-difficulty').value;
-            const prompt = `Du bist ein strenger Web-Engineering-Prüfer (Thomas Schmuck).\n\nErstelle eine neue Aufgabe zum Thema:\n**${topic}**\n\nSchwierigkeit: **${diff}**\n\nOrientiere dich an den Vorlesungsfolien und gib eine gute Musterlösung.\n\nGib nur Aufgabe + Lösung aus.`;
-            document.getElementById('grok-text').innerText = prompt;
-            document.getElementById('grok-output').classList.remove('hidden');
+            const topicId = document.getElementById('grok-topic').value;
+            const difficulty = document.getElementById('grok-difficulty').value;
+            const type = document.getElementById('grok-type').value;
+            
+            if (!topicId) {
+                showToast('Bitte wähle zuerst ein Thema aus.', 'error');
+                return;
+            }
+            
+            const topic = TOPICS.find(t => t.id === topicId);
+            const topicName = topic ? topic.title : 'Web-Engineering';
+            
+            let prompt = `Du bist ein erfahrener Dozent für Web-Engineering an der FH Salzburg. `;
+            prompt += `Erstelle eine anspruchsvolle Klausurfrage im Wert von ${difficulty} Punkten zum Thema "${topicName}". `;
+            
+            // Type specific instructions
+            if (type === 'erklaerung') {
+                prompt += `Die Frage soll eine klare Definition oder Erklärung eines zentralen Konzepts verlangen. Fordere den Studenten auf, das Konzept präzise zu erklären und ggf. ein kurzes Beispiel zu geben. `;
+            } else if (type === 'vergleich') {
+                prompt += `Die Frage soll einen Vergleich zwischen zwei Konzepten, Architekturen oder Technologien verlangen (z. B. Vorteile/Nachteile, Unterschiede). Strukturiere die Frage so, dass eine tabellarische oder klare Aufzählung als gute Antwort möglich ist. `;
+            } else if (type === 'code') {
+                prompt += `Die Frage soll ein kleines Code-Snippet (Node.js / Express / JavaScript) beinhalten oder vom Studenten verlangen, ein solches zu schreiben oder zu analysieren. Die Aufgabe soll prüfungsrelevant und nicht trivial sein. `;
+            } else if (type === 'vorteile') {
+                prompt += `Die Frage soll explizit nach Vorteilen und/oder Nachteilen eines Ansatzes, einer Architektur oder Technologie fragen. Erwarte eine ausgewogene, mit Beispielen untermauerte Antwort. `;
+            } else if (type === 'sicherheit') {
+                prompt += `Die Frage soll ein Security-Szenario oder eine konkrete Bedrohung behandeln. Der Student soll die Bedrohung erkennen, erklären und geeignete Gegenmaßnahmen nennen. `;
+            }
+            
+            prompt += `\n\nDie Frage muss auf Deutsch formuliert sein, prüfungsrelevant für eine 90-minütige Klausur und im Stil der bisherigen Prüfungen der VO. `;
+            prompt += `Füge nach der eigentlichen Frage 3–5 Stichpunkte hinzu, die eine gute Antwort enthalten sollte (für den Studenten zum Selbstcheck). `;
+            prompt += `Halte die Frage präzise und vermeide zu breite oder vage Formulierungen.`;
+            
+            // Show result
+            const resultBox = document.getElementById('grok-result');
+            const promptText = document.getElementById('grok-prompt-text');
+            
+            promptText.textContent = prompt;
+            resultBox.classList.remove('hidden');
+            
+            // Scroll into view
+            resultBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
-        function copyPrompt() {
-            navigator.clipboard.writeText(document.getElementById('grok-text').innerText);
-            alert('Prompt kopiert!');
+        function copyGrokPrompt() {
+            const textEl = document.getElementById('grok-prompt-text');
+            if (!textEl) return;
+            
+            navigator.clipboard.writeText(textEl.textContent.trim()).then(() => {
+                const originalText = event.currentTarget ? event.currentTarget.innerHTML : '';
+                showToast('Prompt in die Zwischenablage kopiert!');
+                
+                // Visual feedback on button if possible
+                const btns = document.querySelectorAll('#grok-result button');
+                if (btns.length) {
+                    const btn = btns[0];
+                    const orig = btn.innerHTML;
+                    btn.innerHTML = `<i class="fa-solid fa-check"></i> <span>Kopiert!</span>`;
+                    setTimeout(() => {
+                        btn.innerHTML = orig;
+                    }, 1600);
+                }
+            }).catch(() => {
+                // Fallback
+                const range = document.createRange();
+                range.selectNode(textEl);
+                window.getSelection().removeAllRanges();
+                window.getSelection().addRange(range);
+                document.execCommand('copy');
+                window.getSelection().removeAllRanges();
+                showToast('Prompt kopiert (Fallback)');
+            });
         }
 
-        function initialize() {
+        // ==================== TAB SWITCHING ====================
+        let currentTab = 'dashboard';
+
+        function switchTab(tab) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            
+            // Show target
+            const target = document.getElementById(tab);
+            if (target) target.classList.add('active');
+            
+            // Update nav buttons
+            document.querySelectorAll('[id^="tab-btn-"]').forEach(btn => {
+                btn.classList.remove('active', 'bg-emerald-600', 'text-white');
+                btn.classList.add('hover:bg-slate-50');
+                
+                if (btn.id === `tab-btn-${tab}`) {
+                    btn.classList.add('active', 'bg-emerald-600', 'text-white');
+                    btn.classList.remove('hover:bg-slate-50');
+                }
+            });
+            
+            currentTab = tab;
+            
+            // Special actions per tab
+            if (tab === 'theorie') {
+                // Already rendered on init
+            } else if (tab === 'training') {
+                filterQuestions(); // re-apply current filters
+            } else if (tab === 'dashboard') {
+                updateDashboard();
+            }
+        }
+
+        // ==================== DARK MODE (BONUS) ====================
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            
+            const icon = document.getElementById('dark-icon');
+            
+            if (html.classList.contains('dark')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+                localStorage.setItem('we_dark_mode', 'true');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+                localStorage.setItem('we_dark_mode', 'false');
+            }
+        }
+
+        function initDarkMode() {
+            const saved = localStorage.getItem('we_dark_mode');
+            const icon = document.getElementById('dark-icon');
+            
+            if (saved === 'true') {
+                document.documentElement.classList.add('dark');
+                if (icon) {
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                }
+            }
+            
+            // Also add some dark styles dynamically if needed (basic support)
+            if (document.documentElement.classList.contains('dark')) {
+                // Could extend here if wanted deeper dark mode
+            }
+        }
+
+        // ==================== INITIALIZATION ====================
+        function initializeApp() {
             initTailwind();
-            document.getElementById('tab-0').classList.remove('hidden');
-            document.getElementById('nav-0').classList.add('active');
+            loadData();
+            
+            // Render dynamic parts
+            renderTheoryTopics();
+            renderQuestions();
+            populateGrokSelects();
+            updateDashboard();
+            
+            // Initial tab state
+            document.getElementById('tab-btn-dashboard').classList.add('active', 'bg-emerald-600', 'text-white');
+            
+            // Keyboard support for search in training
+            const searchInput = document.getElementById('question-search');
+            if (searchInput) {
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        filterQuestions();
+                    }
+                });
+            }
+            
+            // Bonus: Press "?" to focus search when in training tab
+            document.addEventListener('keydown', function(e) {
+                if (e.key === '?' && currentTab === 'training' && document.activeElement.tagName === 'BODY') {
+                    e.preventDefault();
+                    const input = document.getElementById('question-search');
+                    if (input) input.focus();
+                }
+            });
+            
+            initDarkMode();
+            
+            // Welcome toast on first visit (only once)
+            if (!localStorage.getItem('we_trainer_welcomed')) {
+                setTimeout(() => {
+                    showToast('Willkommen! Dein Fortschritt wird automatisch gespeichert.');
+                    localStorage.setItem('we_trainer_welcomed', 'true');
+                }, 1200);
+            }
+            
+            // Make sure dashboard is visible
+            document.getElementById('dashboard').classList.add('active');
+            
+            console.log('%c[Web Engineering Klausur-Trainer] App erfolgreich initialisiert. Alle Daten lokal.', 'color:#64748b');
         }
 
-        window.onload = initialize;
-        window.switchTab = switchTab;
+        // Boot the application
+        window.onload = initializeApp;
     </script>
 </body>
 </html>
