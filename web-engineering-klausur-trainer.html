@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Engineering • Klausur-Trainer • Für die 1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', system_ui, sans-serif; background: #0a0c10; }
+        .font-display { font-family: 'Space Grotesk', 'Inter', sans-serif; font-weight: 600; }
+        .glass { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(12px); }
+        .nav-tab { transition: all 0.1s ease; }
+        .nav-tab.active { background: #052e16; color: #4ade80; border-bottom: 3px solid #10b981; }
+        .section-header { font-size: 1.65rem; line-height: 1.1; font-weight: 700; letter-spacing: -0.025em; }
+        .priority-high { background:#450a0a; color:#f87171; border-color:#991b1b; }
+        .priority-medium { background:#451a03; color:#fbbf24; border-color:#854d0e; }
+    </style>
+</head>
+<body class="text-zinc-200">
+    <nav class="border-b border-zinc-800 bg-zinc-950/95 backdrop-blur-xl sticky top-0 z-50">
+        <div class="max-w-screen-xl mx-auto px-4">
+            <div class="flex items-center justify-between h-14">
+                <div class="flex items-center gap-x-3">
+                    <div class="w-8 h-8 bg-emerald-600 rounded-2xl flex items-center justify-center">
+                        <i class="fa-solid fa-graduation-cap text-white"></i>
+                    </div>
+                    <span class="font-display text-2xl font-semibold tracking-tighter">Web Engineering</span>
+                </div>
+                <div class="px-3 py-1 bg-emerald-950 text-emerald-400 rounded-2xl text-xs font-semibold flex items-center gap-x-1.5 border border-emerald-900">
+                    <i class="fa-solid fa-check-double"></i>
+                    <span>Ziel: 1</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-screen-xl mx-auto px-4 pt-3 md:hidden">
+        <div class="flex overflow-x-auto gap-1 pb-2 text-xs">
+            <button onclick="switchTab(0)" class="nav-tab px-3 py-1.5 rounded-2xl bg-zinc-900 border border-zinc-700 flex-shrink-0" id="nav-0">Dashboard</button>
+            <button onclick="switchTab(1)" class="nav-tab px-3 py-1.5 rounded-2xl bg-zinc-900 border border-zinc-700 flex-shrink-0" id="nav-1">Folien &amp; Theorie</button>
+            <button onclick="switchTab(2)" class="nav-tab px-3 py-1.5 rounded-2xl bg-zinc-900 border border-zinc-700 flex-shrink-0" id="nav-2">Prüfungstraining</button>
+            <button onclick="switchTab(3)" class="nav-tab px-3 py-1.5 rounded-2xl bg-zinc-900 border border-zinc-700 flex-shrink-0" id="nav-3">Mit Grok üben</button>
+            <button onclick="switchTab(4)" class="nav-tab px-3 py-1.5 rounded-2xl bg-zinc-900 border border-zinc-700 flex-shrink-0" id="nav-4">Cheat Sheet</button>
+        </div>
+    </div>
+
+    <div class="max-w-screen-xl mx-auto px-4 md:px-6 pt-4 pb-16">
+        
+        <!-- DASHBOARD -->
+        <div id="tab-0" class="tab-content">
+            <h1 class="font-display text-4xl tracking-tighter font-bold mb-1">Bereit für die 1?</h1>
+            <p class="text-zinc-400 mb-6">Alles an einem Ort – klar strukturiert nach den Folien.</p>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                <div class="glass p-4 rounded-2xl"><div class="text-xs text-emerald-400">FOLIEN</div><div class="text-3xl font-semibold">72%</div></div>
+                <div class="glass p-4 rounded-2xl"><div class="text-xs text-emerald-400">FRAGEN</div><div class="text-3xl font-semibold">10/16</div></div>
+                <div class="glass p-4 rounded-2xl"><div class="text-xs text-emerald-400">FLASHCARDS</div><div class="text-3xl font-semibold">34/52</div></div>
+                <div class="glass p-4 rounded-2xl"><div class="text-xs text-emerald-400">QUIZ BEST</div><div class="text-3xl font-semibold">26/30</div></div>
+            </div>
+
+            <!-- Export / Import -->
+            <div class="glass p-6 rounded-3xl mb-6 border border-emerald-900/30">
+                <div class="font-semibold mb-2 flex items-center gap-x-2">
+                    <i class="fa-solid fa-download text-emerald-400"></i>
+                    <span>Fortschritt exportieren / importieren</span>
+                </div>
+                <p class="text-xs text-zinc-400 mb-4">Damit du deinen Fortschritt und Notizen zwischen Handy und Laptop übertragen kannst.</p>
+                
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <button onclick="exportProgress()" 
+                            class="flex-1 px-5 py-3 bg-emerald-600 hover:bg-emerald-500 rounded-2xl font-semibold flex items-center justify-center gap-x-2">
+                        <i class="fa-solid fa-download"></i>
+                        <span>Fortschritt exportieren</span>
+                    </button>
+                    
+                    <label class="flex-1 cursor-pointer">
+                        <input type="file" id="import-file" accept=".json" class="hidden" onchange="importProgress(event)">
+                        <div class="px-5 py-3 bg-zinc-800 hover:bg-zinc-700 border border-zinc-600 rounded-2xl font-semibold flex items-center justify-center gap-x-2">
+                            <i class="fa-solid fa-upload"></i>
+                            <span>Fortschritt importieren</span>
+                        </div>
+                    </label>
+                </div>
+                <div class="text-[10px] text-zinc-500 mt-3">Die Datei enthält alle deine Notizen und Fortschritte.</div>
+            </div>
+
+            <!-- Lernplan -->
+            <div class="glass p-6 rounded-3xl mb-6 border border-emerald-900/30">
+                <div class="font-semibold mb-4 flex items-center gap-x-2"><i class="fa-solid fa-calendar-alt text-emerald-500"></i> Dein 7-Tage-Lernplan</div>
+                <div class="grid grid-cols-2 md:grid-cols-7 gap-2 text-xs">
+                    <div class="bg-zinc-900 p-3 rounded-2xl"><div class="font-semibold text-emerald-400">Tag 1-2</div>Modernes JS + Async</div>
+                    <div class="bg-zinc-900 p-3 rounded-2xl"><div class="font-semibold text-emerald-400">Tag 3</div>REST + Express + SOA</div>
+                    <div class="bg-zinc-900 p-3 rounded-2xl"><div class="font-semibold text-emerald-400">Tag 4</div>Auth &amp; Cookies</div>
+                    <div class="bg-zinc-900 p-3 rounded-2xl"><div class="font-semibold text-emerald-400">Tag 5</div>Security + HTTPS</div>
+                    <div class="bg-zinc-900 p-3 rounded-2xl"><div class="font-semibold text-emerald-400">Tag 6</div>Vue + MongoDB</div>
+                    <div class="bg-zinc-900 p-3 rounded-2xl col-span-2 md:col-span-2"><div class="font-semibold text-emerald-400">Tag 7</div>Wiederholung + Schwächen</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FOLIEN & THEORIE -->
+        <div id="tab-1" class="tab-content hidden">
+            <div class="mb-4">
+                <h2 class="section-header">Folien &amp; Theorie</h2>
+                <p class="text-sm text-zinc-400">Kerninhalte aus den Vorlesungsfolien – priorisiert.</p>
+            </div>
+
+            <!-- Modernes JavaScript -->
+            <div class="glass p-6 rounded-3xl mb-4">
+                <div class="flex items-center gap-x-2 mb-3">
+                    <span class="priority-high text-xs px-3 py-1 rounded-2xl border">Sehr wichtig</span>
+                    <span class="font-semibold text-lg">Modernes JavaScript (T2)</span>
+                </div>
+                <div class="text-sm space-y-2 text-zinc-300">
+                    <div><strong>var vs let vs const</strong><br><span class="text-xs text-zinc-400">const = nicht neu zuweisbar + Block-Scope • let = änderbar + Block-Scope • var = Function-Scope + Hoisting</span></div>
+                    <div><strong>Scope</strong><br><span class="text-xs text-zinc-400">Function-Scope vs Block-Scope</span></div>
+                    <div><strong>Klassen &amp; Vererbung</strong><br><span class="text-xs text-zinc-400">class + extends + super()</span></div>
+                    <div><strong>Closures</strong><br><span class="text-xs text-zinc-400">Innere Funktion hat Zugriff auf Variablen der äußeren Funktion</span></div>
+                </div>
+                <textarea class="mt-4 w-full bg-zinc-950 border border-zinc-700 rounded-xl p-3 text-sm h-16" placeholder="Eigene Notizen..."></textarea>
+            </div>
+
+            <!-- Asynchrone Programmierung -->
+            <div class="glass p-6 rounded-3xl mb-4">
+                <div class="flex items-center gap-x-2 mb-3">
+                    <span class="priority-high text-xs px-3 py-1 rounded-2xl border">Sehr wichtig</span>
+                    <span class="font-semibold text-lg">Asynchrone Programmierung &amp; Node.js</span>
+                </div>
+                <div class="text-sm space-y-2 text-zinc-300">
+                    <div><strong>Single-Threaded + Event Loop</strong><br><span class="text-xs text-zinc-400">JavaScript läuft auf einem Thread. I/O wird ans Betriebssystem ausgelagert.</span></div>
+                    <div><strong>Promises &amp; async/await</strong><br><span class="text-xs text-zinc-400">Promise = Objekt für zukünftigen Wert. async/await = lesbarere Syntax.</span></div>
+                </div>
+                <textarea class="mt-4 w-full bg-zinc-950 border border-zinc-700 rounded-xl p-3 text-sm h-16" placeholder="Eigene Notizen..."></textarea>
+            </div>
+
+            <!-- REST & Express -->
+            <div class="glass p-6 rounded-3xl mb-4">
+                <div class="flex items-center gap-x-2 mb-3">
+                    <span class="priority-high text-xs px-3 py-1 rounded-2xl border">Sehr wichtig</span>
+                    <span class="font-semibold text-lg">REST &amp; Express.js (T3)</span>
+                </div>
+                <div class="text-sm space-y-2 text-zinc-300">
+                    <div><strong>REST = Representational State Transfer</strong><br><span class="text-xs text-zinc-400">Stateless + Uniform Interface</span></div>
+                    <div><strong>CRUD ↔ HTTP</strong><br><span class="text-xs text-zinc-400">Create=POST, Read=GET, Update=PUT, Delete=DELETE</span></div>
+                    <div><strong>Express Basics</strong><br><span class="text-xs text-zinc-400">app.use(express.static()), app.get(), req.params, res.json()</span></div>
+                </div>
+                <textarea class="mt-4 w-full bg-zinc-950 border border-zinc-700 rounded-xl p-3 text-sm h-16" placeholder="Eigene Notizen..."></textarea>
+            </div>
+
+            <!-- SOA -->
+            <div class="glass p-6 rounded-3xl mb-4">
+                <div class="flex items-center gap-x-2 mb-3">
+                    <span class="priority-medium text-xs px-3 py-1 rounded-2xl border">Wichtig</span>
+                    <span class="font-semibold text-lg">Architekturen: Monolith vs SOA (T3)</span>
+                </div>
+                <div class="text-sm space-y-2 text-zinc-300">
+                    <div><strong>Monolith</strong><br><span class="text-xs text-zinc-400">Eine große Anwendung. Einfach zu starten, aber schwer skalierbar.</span></div>
+                    <div><strong>SOA (Service Oriented Architecture)</strong><br><span class="text-xs text-zinc-400">System wird in unabhängige Services aufgeteilt. Bessere Wartbarkeit und Skalierbarkeit.</span></div>
+                </div>
+                <textarea class="mt-4 w-full bg-zinc-950 border border-zinc-700 rounded-xl p-3 text-sm h-16" placeholder="Eigene Notizen..."></textarea>
+            </div>
+
+            <!-- Auth -->
+            <div class="glass p-6 rounded-3xl mb-4">
+                <div class="flex items-center gap-x-2 mb-3">
+                    <span class="priority-high text-xs px-3 py-1 rounded-2xl border">Sehr wichtig</span>
+                    <span class="font-semibold text-lg">Cookies, Sessions &amp; Token Auth (T6)</span>
+                </div>
+                <div class="text-sm space-y-2 text-zinc-300">
+                    <div><strong>Cookie Security Flags</strong><br><span class="text-xs text-zinc-400">Secure • HttpOnly • SameSite</span></div>
+                    <div><strong>Token-basierte Auth (JWT)</strong><br><span class="text-xs text-zinc-400">Login → signiertes JWT → Client sendet es bei jedem Request (stateless).</span></div>
+                </div>
+                <textarea class="mt-4 w-full bg-zinc-950 border border-zinc-700 rounded-xl p-3 text-sm h-16" placeholder="Eigene Notizen..."></textarea>
+            </div>
+
+            <!-- Security -->
+            <div class="glass p-6 rounded-3xl mb-4">
+                <div class="flex items-center gap-x-2 mb-3">
+                    <span class="priority-medium text-xs px-3 py-1 rounded-2xl border">Wichtig</span>
+                    <span class="font-semibold text-lg">Security &amp; HTTPS (T6)</span>
+                </div>
+                <div class="text-sm space-y-2 text-zinc-300">
+                    <div><strong>SQL-Injection</strong><br><span class="text-xs text-zinc-400">Schutz: Prepared Statements + ORM</span></div>
+                    <div><strong>XSS &amp; CSRF</strong><br><span class="text-xs text-zinc-400">XSS → Input Validation + CSP • CSRF → SameSite Cookies</span></div>
+                    <div><strong>HTTPS / Zertifikate</strong><br><span class="text-xs text-zinc-400">Key-Pair → CSR → CA signiert → Zertifikat</span></div>
+                </div>
+                <textarea class="mt-4 w-full bg-zinc-950 border border-zinc-700 rounded-xl p-3 text-sm h-16" placeholder="Eigene Notizen..."></textarea>
+            </div>
+
+            <!-- Vue -->
+            <div class="glass p-6 rounded-3xl mb-4">
+                <div class="flex items-center gap-x-2 mb-3">
+                    <span class="priority-medium text-xs px-3 py-1 rounded-2xl border">Wichtig</span>
+                    <span class="font-semibold text-lg">Vue.js &amp; MVVM (T4)</span>
+                </div>
+                <div class="text-sm space-y-2 text-zinc-300">
+                    <div><strong>MVVM</strong><br><span class="text-xs text-zinc-400">Model – View – ViewModel mit Two-Way Data Binding</span></div>
+                    <div><strong>Lifecycle Hooks</strong><br><span class="text-xs text-zinc-400">created • mounted (gut für API Calls)</span></div>
+                </div>
+                <textarea class="mt-4 w-full bg-zinc-950 border border-zinc-700 rounded-xl p-3 text-sm h-16" placeholder="Eigene Notizen..."></textarea>
+            </div>
+
+            <!-- MongoDB -->
+            <div class="glass p-6 rounded-3xl">
+                <div class="flex items-center gap-x-2 mb-3">
+                    <span class="priority-medium text-xs px-3 py-1 rounded-2xl border">Wichtig</span>
+                    <span class="font-semibold text-lg">MongoDB &amp; NoSQL (T5)</span>
+                </div>
+                <div class="text-sm space-y-2 text-zinc-300">
+                    <div><strong>CRUD Operationen</strong><br><span class="text-xs text-zinc-400">insertOne, find, updateOne, deleteOne</span></div>
+                </div>
+                <textarea class="mt-4 w-full bg-zinc-950 border border-zinc-700 rounded-xl p-3 text-sm h-16" placeholder="Eigene Notizen..."></textarea>
+            </div>
+        </div>
+
+        <!-- PRÜFUNGSTRAINING -->
+        <div id="tab-2" class="tab-content hidden">
+            <h2 class="section-header mb-2">Prüfungstraining</h2>
+            <p class="text-sm text-zinc-400 mb-4">Beispielklausur 2024 (andere Dozenten).</p>
+            <div class="glass p-5 rounded-2xl mb-3">
+                <div class="flex justify-between"><div><span class="font-mono text-xs">Q9</span> Token-basierte Authentifizierung skizzieren</div><div class="text-amber-400 text-xs">10 Pkt</div></div>
+                <button onclick="this.innerHTML='✓ Erledigt';this.classList.add('bg-emerald-600')" class="mt-3 text-xs px-4 py-1.5 rounded-2xl bg-zinc-800 border border-zinc-600">Als erledigt markieren</button>
+            </div>
+            <div class="glass p-5 rounded-2xl">
+                <div class="flex justify-between"><div><span class="font-mono text-xs">Q16</span> Express Server mit static + /ticket/:id</div><div class="text-amber-400 text-xs">10 Pkt</div></div>
+                <button onclick="this.innerHTML='✓ Erledigt';this.classList.add('bg-emerald-600')" class="mt-3 text-xs px-4 py-1.5 rounded-2xl bg-zinc-800 border border-zinc-600">Als erledigt markieren</button>
+            </div>
+        </div>
+
+        <!-- MIT GROK ÜBEN -->
+        <div id="tab-3" class="tab-content hidden">
+            <h2 class="section-header mb-4">Mit Grok üben</h2>
+            <div class="glass p-6 rounded-3xl mb-6">
+                <div class="grid md:grid-cols-2 gap-4">
+                    <select id="grok-topic" class="bg-zinc-900 border border-zinc-700 rounded-2xl px-4 py-3 text-sm">
+                        <option value="Modernes JavaScript">Modernes JavaScript</option>
+                        <option value="REST &amp; Express.js">REST &amp; Express.js</option>
+                        <option value="SOA vs Monolith">SOA vs Monolith</option>
+                        <option value="Token-basierte Authentifizierung">Token-Authentifizierung</option>
+                        <option value="Cookies &amp; Security">Cookies &amp; Security</option>
+                        <option value="Security">Security</option>
+                        <option value="Vue.js &amp; MVVM">Vue.js &amp; MVVM</option>
+                        <option value="MongoDB CRUD">MongoDB CRUD</option>
+                    </select>
+                    <select id="grok-difficulty" class="bg-zinc-900 border border-zinc-700 rounded-2xl px-4 py-3 text-sm">
+                        <option value="4-6 Punkte Theorie">4–6 Punkte Theorie</option>
+                        <option value="8 Punkte">8 Punkte</option>
+                        <option value="10 Punkte (Skizze)">10 Punkte (Skizze)</option>
+                    </select>
+                </div>
+                <button onclick="generateGrokPrompt()" class="mt-4 w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 rounded-3xl font-semibold flex items-center justify-center gap-x-2">
+                    <i class="fa-solid fa-magic"></i> <span>Prompt generieren</span>
+                </button>
+            </div>
+
+            <div id="grok-output" class="hidden glass p-6 rounded-3xl">
+                <div class="flex justify-between mb-3"><div class="font-semibold">Dein Prompt</div><button onclick="copyPrompt()" class="text-xs px-3 py-1 bg-zinc-800 rounded-xl">Kopieren</button></div>
+                <div id="grok-text" class="code-block text-sm"></div>
+            </div>
+        </div>
+
+        <!-- CHEAT SHEET -->
+        <div id="tab-4" class="tab-content hidden">
+            <h2 class="section-header mb-4">Cheat Sheet</h2>
+            <div class="grid md:grid-cols-2 gap-4 text-sm">
+                <div class="glass p-5 rounded-2xl">
+                    <div class="font-semibold text-emerald-400 mb-2">REST</div>
+                    <div class="text-xs">Representational State Transfer<br>• Stateless<br>• Uniform Interface<br>• Create=POST, Read=GET, Update=PUT, Delete=DELETE</div>
+                </div>
+                <div class="glass p-5 rounded-2xl">
+                    <div class="font-semibold text-emerald-400 mb-2">Cookie Flags</div>
+                    <div class="text-xs">• Secure (nur HTTPS)<br>• HttpOnly (XSS-Schutz)<br>• SameSite (CSRF-Schutz)</div>
+                </div>
+                <div class="glass p-5 rounded-2xl">
+                    <div class="font-semibold text-emerald-400 mb-2">SOA Vorteile</div>
+                    <div class="text-xs">Wiederverwendbarkeit, unabhängige Entwicklung, bessere Skalierbarkeit</div>
+                </div>
+                <div class="glass p-5 rounded-2xl">
+                    <div class="font-semibold text-emerald-400 mb-2">JWT</div>
+                    <div class="text-xs">Header.Payload.Signature<br>Signatur = HMACSHA256(Base64(Header) + "." + Base64(Payload), secret)</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function initTailwind() {}
+
+        let currentTab = 0;
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById('tab-' + tab).classList.remove('hidden');
+            document.querySelectorAll('.nav-tab').forEach((el, i) => el.classList.toggle('active', i === tab));
+            currentTab = tab;
+        }
+
+        // ==================== EXPORT / IMPORT ====================
+        function exportProgress() {
+            const data = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                // Nur relevante Keys exportieren
+                if (key.includes('exam') || key.includes('flash') || key.includes('checklist') || 
+                    key.includes('note') || key.includes('quiz') || key.includes('folien')) {
+                    data[key] = localStorage.getItem(key);
+                }
+            }
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `web-engineering-fortschritt-${new Date().toISOString().slice(0,10)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function importProgress(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    Object.keys(data).forEach(key => {
+                        localStorage.setItem(key, data[key]);
+                    });
+                    
+                    alert('Fortschritt erfolgreich importiert! Die Seite wird neu geladen.');
+                    location.reload();
+                } catch (error) {
+                    alert('Fehler beim Importieren der Datei. Bitte eine gültige JSON-Datei auswählen.');
+                }
+            };
+            reader.readAsText(file);
+            
+            // Reset file input
+            event.target.value = '';
+        }
+
+        // ==================== GROK ====================
+        function generateGrokPrompt() {
+            const topic = document.getElementById('grok-topic').value;
+            const diff = document.getElementById('grok-difficulty').value;
+            const prompt = `Du bist ein strenger Web-Engineering-Prüfer (Thomas Schmuck).\n\nErstelle eine neue Aufgabe zum Thema:\n**${topic}**\n\nSchwierigkeit: **${diff}**\n\nOrientiere dich an den Vorlesungsfolien und gib eine gute Musterlösung.\n\nGib nur Aufgabe + Lösung aus.`;
+            document.getElementById('grok-text').innerText = prompt;
+            document.getElementById('grok-output').classList.remove('hidden');
+        }
+
+        function copyPrompt() {
+            navigator.clipboard.writeText(document.getElementById('grok-text').innerText);
+            alert('Prompt kopiert!');
+        }
+
+        function initialize() {
+            initTailwind();
+            document.getElementById('tab-0').classList.remove('hidden');
+            document.getElementById('nav-0').classList.add('active');
+        }
+
+        window.onload = initialize;
+        window.switchTab = switchTab;
+    </script>
+</body>
+</html>
